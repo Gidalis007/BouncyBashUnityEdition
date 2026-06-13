@@ -3,11 +3,15 @@ using Unity.Netcode;
 
 public class PlayerController : NetworkBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float _speed = 5f;
+    
+    private Rigidbody _rigidbody;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (IsOwner){
+        if (IsOwner)
+        {
+            _rigidbody = GetComponent<Rigidbody>(); 
             GetComponent<Renderer>().material.color = Color.red;
         }
     }
@@ -15,12 +19,25 @@ public class PlayerController : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsOwner) return;
+        if (!IsOwner)
+        {
+            return;
+        }
+        Move();
+    }
+    
+    private void ConnectAsClient()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+        }
+    }
 
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
-        transform.Translate(direction * speed * Time.deltaTime);
+    private void Move()
+    {
+        if (IsOwner)
+        {
+            _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+        }
     }
 }
