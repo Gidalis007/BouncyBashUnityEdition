@@ -99,20 +99,21 @@ public class CarController : MonoBehaviour
 
     private void Dash()
     {
+
         Vector3 dashDir = Vector3.zero;
 
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(KeyCode) || Input.GetKeyDown(KeyCode.UpArrow))
             dashDir = transform.forward;
-        else if (Input.GetKeyDown(KeyCode.L))
+        else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.DownArrow))
             dashDir = -transform.forward;
-        else if (Input.GetKeyDown(KeyCode.K))
+        else if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
-        else if (Input.GetKeyDown(KeyCode.M))
-            dashDir = transform.right;
+        else if (Input.GetKeyDown(KeyCode.M) || Input.GetKeyDown(KeyCode.RightArrow))
+            dashDir = transform.right;*/
 
         if (dashDir != Vector3.zero)
         {
-            _rigidbody.linearVelocity = dashDir * _dashForce;
+            _moveForce = dashDir * _dashForce;
         }
     }
 }
