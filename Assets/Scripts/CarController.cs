@@ -8,9 +8,20 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _steerAngle = 20f;
     [SerializeField] private float _traction = 1f;
 
+    [Space]
+
+    public float extraGravity = 20f;
+
+    [Space]
+
+    [SerializeField] private float _jumpForce = 5f;
+    [SerializeField] private float _dashForce = 30f;
+
+
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
 
+    #region Mono
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -18,7 +29,40 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Accélération
+        if(!Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
+            _rigidbody.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+        Move();
+        Direction();
+    }
+
+    private void Update()
+    {
+        Jump();
+        Dash();
+    }
+    #endregion
+
+    private void Direction()
+    {
+        float steerInput = Input.GetAxis("Horizontal");
+
+        if (_rigidbody.linearVelocity.magnitude > 0.1f)
+        {
+            float rotationAmount =
+                steerInput *
+                _steerAngle *
+                (_rigidbody.linearVelocity.magnitude / _maxSpeed);
+
+            _rigidbody.MoveRotation(
+                _rigidbody.rotation *
+                Quaternion.Euler(0, rotationAmount, 0)
+            );
+        }
+    }
+
+    private void Move()
+    {
+        // Accï¿½lï¿½ration
         float verticalInput = Input.GetAxis("Vertical");
         _moveForce += transform.forward * _moveSpeed * verticalInput * Time.fixedDeltaTime;
 
@@ -41,24 +85,34 @@ public class CarController : MonoBehaviour
             _rigidbody.linearVelocity.y,
             _moveForce.z
         );
+    }
 
-        // Direction
-        float steerInput = Input.GetAxis("Horizontal");
+    private void Jump()
+    {
+        bool canJump = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f);
 
-        if (_rigidbody.linearVelocity.magnitude > 0.1f)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
-            float rotationAmount =
-                steerInput *
-                _steerAngle *
-                (_rigidbody.linearVelocity.magnitude / _maxSpeed);
-
-            _rigidbody.MoveRotation(
-                _rigidbody.rotation *
-                Quaternion.Euler(0, rotationAmount, 0)
-            );
+            _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         }
+    }
 
-        Debug.DrawRay(transform.position, _moveForce.normalized * 3, Color.red);
-        Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
+    private void Dash()
+    {
+        Vector3 dashDir = Vector3.zero;
+
+        if (Input.GetKeyDown(KeyCode.O))
+            dashDir = transform.forward;
+        else if (Input.GetKeyDown(KeyCode.L))
+            dashDir = -transform.forward;
+        else if (Input.GetKeyDown(KeyCode.K))
+            dashDir = -transform.right;
+        else if (Input.GetKeyDown(KeyCode.M))
+            dashDir = transform.right;
+
+        if (dashDir != Vector3.zero)
+        {
+            _rigidbody.linearVelocity = dashDir * _dashForce;
+        }
     }
 }
