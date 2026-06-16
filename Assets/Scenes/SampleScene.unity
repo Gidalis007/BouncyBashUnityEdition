@@ -534,9 +534,9 @@ MonoBehaviour:
   _drag: 0.99
   _steerAngle: 7
   _traction: 1
-  extraGravity: 20
+  _extraGravity: 20
   _jumpForce: 15
-  _dashForce: 500
+  _dashForce: 60
 --- !u!65 &501475534
 BoxCollider:
   m_ObjectHideFlags: 0

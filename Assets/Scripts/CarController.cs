@@ -41,8 +41,6 @@ public class CarController : MonoBehaviour
     {
         Jump();
         Dash();
-
-        Debug.Log(_moveForce);
     }
     #endregion
 
@@ -55,7 +53,7 @@ public class CarController : MonoBehaviour
             float rotationAmount =
                 steerInput *
                 _steerAngle *
-                (_rigidbody.linearVelocity.magnitude / _maxSpeed);
+                (_rigidbody.linearVelocity.magnitude / Mathf.Clamp(_maxSpeed,0,_moveForce.magnitude));
 
             _rigidbody.MoveRotation(
                 _rigidbody.rotation *
@@ -118,7 +116,8 @@ public class CarController : MonoBehaviour
 
         if (dashDir != Vector3.zero)
         {
-            //StartCoroutine(StopMaxSpeed());
+            StopCoroutine(StopMaxSpeed());
+            StartCoroutine(StopMaxSpeed());
             _moveForce = dashDir * _dashForce;
         }
     }
@@ -128,7 +127,7 @@ public class CarController : MonoBehaviour
         _stopMaxSpeed = true;
         Debug.Log("j'annule la limitation");
             
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(1f);
         
         _stopMaxSpeed = false;
         Debug.Log("je remais normal");
