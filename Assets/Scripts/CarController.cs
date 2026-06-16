@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CarController : MonoBehaviour
@@ -20,6 +21,7 @@ public class CarController : MonoBehaviour
 
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
+    private bool _stopMaxSpeed = false;
 
     #region Mono
     private void Start()
@@ -39,6 +41,8 @@ public class CarController : MonoBehaviour
     {
         Jump();
         Dash();
+
+        Debug.Log(_moveForce);
     }
     #endregion
 
@@ -67,7 +71,8 @@ public class CarController : MonoBehaviour
         _moveForce += transform.forward * _moveSpeed * verticalInput * Time.fixedDeltaTime;
 
         // Limitation vitesse
-        _moveForce = Vector3.ClampMagnitude(_moveForce, _maxSpeed);
+        if (!_stopMaxSpeed)
+            _moveForce = Vector3.ClampMagnitude(_moveForce, _maxSpeed);
 
         // Traction
         _moveForce = Vector3.Lerp(
@@ -99,7 +104,8 @@ public class CarController : MonoBehaviour
 
     private void Dash()
     {
-
+        StartCoroutine(StopMaxSpeed());
+        _stopMaxSpeed = true;
         Vector3 dashDir = Vector3.zero;
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -115,5 +121,13 @@ public class CarController : MonoBehaviour
         {
             _moveForce = dashDir * _dashForce;
         }
+    }
+
+    private IEnumerator StopMaxSpeed()
+    {
+        Debug.Log("je fais tous de suite");
+        yield return new WaitForSeconds(2f);
+        // j'ai attendu 2 sec je remets
+        StopCoroutine(StopMaxSpeed());
     }
 }
