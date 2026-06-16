@@ -536,7 +536,7 @@ MonoBehaviour:
   _traction: 1
   extraGravity: 20
   _jumpForce: 15
-  _dashForce: 100
+  _dashForce: 500
 --- !u!65 &501475534
 BoxCollider:
   m_ObjectHideFlags: 0

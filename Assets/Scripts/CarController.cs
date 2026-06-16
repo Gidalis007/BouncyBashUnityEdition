@@ -102,14 +102,14 @@ public class CarController : MonoBehaviour
 
         Vector3 dashDir = Vector3.zero;
 
-        if (Input.GetKeyDown(KeyCode) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.I))
             dashDir = transform.forward;
-        else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.K))
             dashDir = -transform.forward;
-        else if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.J))
             dashDir = -transform.right;
-        else if (Input.GetKeyDown(KeyCode.M) || Input.GetKeyDown(KeyCode.RightArrow))
-            dashDir = transform.right;*/
+        else if (Input.GetKeyDown(KeyCode.L))
+            dashDir = transform.right;
 
         if (dashDir != Vector3.zero)
         {
