@@ -529,10 +529,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede42b8bc5b7fe74590b778589219e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
-  _moveSpeed: 200
+  _moveSpeed: 50
   _maxSpeed: 35
-  _drag: 0.98
-  _steerAngle: 5
+  _drag: 0.99
+  _steerAngle: 7
   _traction: 1
   extraGravity: 20
   _jumpForce: 15
