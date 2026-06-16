@@ -11,7 +11,7 @@ public class CarController : MonoBehaviour
 
     [Space]
 
-    public float extraGravity = 20f;
+    public float _extraGravity = 20f;
 
     [Space]
 
@@ -31,8 +31,8 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
-            _rigidbody.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+        if(!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+            _rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
         Move();
         Direction();
     }
@@ -94,7 +94,7 @@ public class CarController : MonoBehaviour
 
     private void Jump()
     {
-        bool canJump = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f);
+        bool canJump = Physics.Raycast(transform.position, Vector3.down, 1.1f);
 
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
@@ -104,8 +104,7 @@ public class CarController : MonoBehaviour
 
     private void Dash()
     {
-        StartCoroutine(StopMaxSpeed());
-        _stopMaxSpeed = true;
+        
         Vector3 dashDir = Vector3.zero;
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -119,15 +118,20 @@ public class CarController : MonoBehaviour
 
         if (dashDir != Vector3.zero)
         {
+            //StartCoroutine(StopMaxSpeed());
             _moveForce = dashDir * _dashForce;
         }
     }
 
     private IEnumerator StopMaxSpeed()
     {
-        Debug.Log("je fais tous de suite");
-        yield return new WaitForSeconds(2f);
-        // j'ai attendu 2 sec je remets
+        _stopMaxSpeed = true;
+        Debug.Log("j'annule la limitation");
+            
+        yield return new WaitForSeconds(5f);
+        
+        _stopMaxSpeed = false;
+        Debug.Log("je remais normal");
         StopCoroutine(StopMaxSpeed());
     }
 }
