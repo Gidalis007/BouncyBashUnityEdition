@@ -47,12 +47,14 @@ public class CarController : MonoBehaviour
 
     private void Direction()
     {
-        float steerInput;
-
-        if (_verticalInput > 0)
+        float steerInput = 0;
+        
+        if (Vector3.Dot(_rigidbody.linearVelocity, transform.forward) > 0)
             steerInput = Input.GetAxis("Horizontal");
-        else 
+        else if (Vector3.Dot(_rigidbody.linearVelocity, transform.forward) < 0)
             steerInput = -Input.GetAxis("Horizontal");
+        else 
+            Debug.Log("c'est la merde");
         
         if (_rigidbody.linearVelocity.magnitude > 0.1f)
         {
@@ -110,6 +112,7 @@ public class CarController : MonoBehaviour
     {
         
         Vector3 dashDir = Vector3.zero;
+        float airPenalty = 1f;
 
         if (Input.GetKeyDown(KeyCode.I))
             dashDir = transform.forward;
@@ -120,11 +123,15 @@ public class CarController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.L))
             dashDir = transform.right;
 
+        if (Physics.Raycast(transform.position, Vector3.down, 1.1f))
+        {
+            airPenalty = 2f;
+        }
         if (dashDir != Vector3.zero)
         {
             StopCoroutine(StopMaxSpeed());
             StartCoroutine(StopMaxSpeed());
-            _moveForce = dashDir * _dashForce;
+            _moveForce = (dashDir * _dashForce)/airPenalty;
         }
     }
 
