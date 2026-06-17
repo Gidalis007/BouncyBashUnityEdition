@@ -8,7 +8,7 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _drag = 0.98f;
     [SerializeField] private float _steerAngle = 20f;
     [SerializeField] private float _traction = 1f;
-
+    
     [Space]
 
     public float _extraGravity = 20f;
@@ -21,7 +21,8 @@ public class CarController : MonoBehaviour
 
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
-    private bool _stopMaxSpeed = false;
+    private bool _stopMaxSpeed;
+    private float _verticalInput;
 
     #region Mono
     private void Start()
@@ -46,8 +47,13 @@ public class CarController : MonoBehaviour
 
     private void Direction()
     {
-        float steerInput = Input.GetAxis("Horizontal");
+        float steerInput;
 
+        if (_verticalInput > 0)
+            steerInput = Input.GetAxis("Horizontal");
+        else 
+            steerInput = -Input.GetAxis("Horizontal");
+        
         if (_rigidbody.linearVelocity.magnitude > 0.1f)
         {
             float rotationAmount =
@@ -61,12 +67,12 @@ public class CarController : MonoBehaviour
             );
         }
     }
-
+    
     private void Move()
     {
         // Acc�l�ration
-        float verticalInput = Input.GetAxis("Vertical");
-        _moveForce += transform.forward * _moveSpeed * verticalInput * Time.fixedDeltaTime;
+        _verticalInput = Input.GetAxis("Vertical");
+        _moveForce += transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
 
         // Limitation vitesse
         if (!_stopMaxSpeed)
