@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
+    [Header("Mouvement Base")]
     [SerializeField] private float _moveSpeed = 50f;
     [SerializeField] private float _maxSpeed = 15f;
     [SerializeField] private float _drag = 0.98f;
@@ -11,18 +12,21 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _traction = 1f;
     
     [Space]
-
-    public float _extraGravity = 20f;
-
-    [Space]
-
+    [Header("Mouvement Special")]
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _dashForce = 30f;
+    [SerializeField] private float _airPenality = 20f;
+
+
+    [Space]
+    [Header("Gravity")]
+    [SerializeField] float _extraGravity = 20f;
     
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
     private bool _stopMaxSpeed;
     private float _verticalInput;
+    private float _airPenaltyMemory;
 
     #region Mono
 
@@ -34,7 +38,14 @@ public class CarController : MonoBehaviour
     private void FixedUpdate()
     {
         if(!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+        {
             _rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
+            _airPenaltyMemory = _airPenality;
+        }
+        else
+        {
+            _airPenaltyMemory = 1;
+        }
         Move();
         Direction();
     }
@@ -106,28 +117,23 @@ public class CarController : MonoBehaviour
 
     private void Dash()
     {
-        
+
         Vector3 dashDir = Vector3.zero;
-        float airPenalty = 1f;
 
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.UpArrow))
             dashDir = transform.forward;
-        else if (Input.GetKeyDown(KeyCode.K))
+        else if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.DownArrow))
             dashDir = -transform.forward;
-        else if (Input.GetKeyDown(KeyCode.J))
+        else if (Input.GetKeyDown(KeyCode.J)  || Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
-        else if (Input.GetKeyDown(KeyCode.L))
+        else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.RightArrow))
             dashDir = transform.right;
-
-        if (Physics.Raycast(transform.position, Vector3.down, 1.1f))
-        {
-            airPenalty = 2f;
-        }
+        
         if (dashDir != Vector3.zero)
         {
             StopCoroutine(StopMaxSpeed());
             StartCoroutine(StopMaxSpeed());
-            _moveForce = (dashDir * _dashForce)/airPenalty;
+            _moveForce = (dashDir * _dashForce)/_airPenaltyMemory;
         }
     }
 
