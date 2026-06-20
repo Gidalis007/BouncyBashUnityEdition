@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -17,19 +18,19 @@ public class CarController : MonoBehaviour
 
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _dashForce = 30f;
-
-
+    
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
     private bool _stopMaxSpeed;
     private float _verticalInput;
 
     #region Mono
-    private void Start()
+
+    private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
     }
-
+    
     private void FixedUpdate()
     {
         if(!Physics.Raycast(transform.position, Vector3.down, 1.1f))
@@ -47,50 +48,45 @@ public class CarController : MonoBehaviour
 
     private void Direction()
     {
-        float steerInput = 0;
-        
-        if (Vector3.Dot(_rigidbody.linearVelocity, transform.forward) > 0)
-            steerInput = Input.GetAxis("Horizontal");
-        else if (Vector3.Dot(_rigidbody.linearVelocity, transform.forward) < 0)
-            steerInput = -Input.GetAxis("Horizontal");
-        else 
-            Debug.Log("c'est la merde");
-        
-        if (_rigidbody.linearVelocity.magnitude > 0.1f)
-        {
-            float rotationAmount =
-                steerInput *
-                _steerAngle *
-                (_rigidbody.linearVelocity.magnitude / Mathf.Clamp(_maxSpeed,0,_moveForce.magnitude));
+        float steerInput = Input.GetAxisRaw("Horizontal");
 
-            _rigidbody.MoveRotation(
-                _rigidbody.rotation *
-                Quaternion.Euler(0, rotationAmount, 0)
-            );
-        }
+        // Rotation proportionnelle à la vitesse, plafonnée
+        float speedFactor = Mathf.Clamp01(_rigidbody.linearVelocity.magnitude / _maxSpeed);
+
+        // Courbe : tourne bien dès le départ, légèrement moins vite à haute vitesse
+        float rotationFactor = Mathf.Lerp(0.5f, 1f, speedFactor);
+
+        float rotationAmount = steerInput * _steerAngle * rotationFactor * Time.fixedDeltaTime * 60f;
+
+        _rigidbody.MoveRotation(
+            _rigidbody.rotation *
+            Quaternion.Euler(0, rotationAmount, 0)
+        );
     }
-    
+
     private void Move()
     {
-        // Acc�l�ration
         _verticalInput = Input.GetAxis("Vertical");
+
+        // Accélération
         _moveForce += transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
 
         // Limitation vitesse
         if (!_stopMaxSpeed)
             _moveForce = Vector3.ClampMagnitude(_moveForce, _maxSpeed);
 
-        // Traction
-        _moveForce = Vector3.Lerp(
-            _moveForce.normalized,
-            transform.forward,
-            _traction * Time.fixedDeltaTime
-        ) * _moveForce.magnitude;
+        // Traction : réaligne la vélocité vers le forward du véhicule
+        // _traction = 1 → colle bien (pas de drift)
+        // _traction = 0 → glisse librement
+        float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
+        Vector3 forward = transform.forward * Vector3.Dot(_moveForce, transform.forward);
+        Vector3 right   = transform.right   * Vector3.Dot(_moveForce, transform.right);
+        _moveForce = forward + right * tractionForce;
 
         // Drag
         _moveForce *= _drag;
 
-        // Application de la vitesse au Rigidbody
+        // Application
         _rigidbody.linearVelocity = new Vector3(
             _moveForce.x,
             _rigidbody.linearVelocity.y,
