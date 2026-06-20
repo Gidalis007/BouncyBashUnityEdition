@@ -87,8 +87,6 @@ public class CarController : MonoBehaviour
             _moveForce = Vector3.ClampMagnitude(_moveForce, _maxSpeed);
 
         // Traction : réaligne la vélocité vers le forward du véhicule
-        // _traction = 1 → colle bien (pas de drift)
-        // _traction = 0 → glisse librement
         float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
         Vector3 forward = transform.forward * Vector3.Dot(_moveForce, transform.forward);
         Vector3 right   = transform.right   * Vector3.Dot(_moveForce, transform.right);
