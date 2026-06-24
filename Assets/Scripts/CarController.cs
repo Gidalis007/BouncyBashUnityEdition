@@ -54,6 +54,7 @@ public class CarController : MonoBehaviour
     {
         Jump();
         Dash();
+        Test();
     }
     #endregion
 
@@ -120,7 +121,7 @@ public class CarController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.UpArrow))
             dashDir = transform.forward;
-        else if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.DownArrow) )
             dashDir = -transform.forward;
         else if (Input.GetKeyDown(KeyCode.J)  || Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
@@ -145,5 +146,13 @@ public class CarController : MonoBehaviour
         _stopMaxSpeed = false;
         Debug.Log("je remais normal");
         StopCoroutine(StopMaxSpeed());
+    }
+
+    private void Test()
+    {
+        if (Input.GetKey(KeyCode.Joystick1Button0))
+        {
+            Debug.Log("pate");
+        }
     }
 }
