@@ -28,7 +28,7 @@ public class ForwardColliderController : MonoBehaviour
         Vector3 bumpDirection;
         CarController AdverseCar = other.gameObject.GetComponentInParent<CarController>();
         
-        if (AdverseCar.CanBeBump != true)
+        if ( !other.gameObject.GetComponentInParent<CarController>() || AdverseCar.CanBeBump != true )
             return;
         
         AdverseCar.CanBeBump = false;

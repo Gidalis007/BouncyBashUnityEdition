@@ -4,12 +4,7 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - UpPlayerCollider
-  - DownPlayerCollider
-  - LeftPlayerCollider
-  - RightPlayerCollider
-  - ForwardPlayerCollider
-  - BackwardPlayerCollider
+  - ColliderDetector
   layers:
   - Default
   - TransparentFX

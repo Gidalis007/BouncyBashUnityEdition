@@ -1,14 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DEBUGGameLoader : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    [SerializeField] private bool _shouldLoadScene = true;
-    [SerializeField] private string _sceneName = "GameScene";
+    #region Attributes
+    private static GameManager _instance = null;
+    #endregion Attributes
 
-    void Start()
+    #region Events
+
+    #endregion Events
+
+    #region Properties
+    public static GameManager Instance { get => _instance; }
+    #endregion Properties
+
+    #region Mono
+    private void Awake() // Makes it a singleton
     {
-        if (_shouldLoadScene)
-            SceneManager.LoadScene(_sceneName);
+        if (_instance == null)
+            _instance = this;
+        DontDestroyOnLoad(gameObject);
     }
+
+    #endregion Mono
+
+    #region Methods
+    #endregion Methods
 }

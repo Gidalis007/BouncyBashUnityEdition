@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CarController : MonoBehaviour
@@ -28,6 +29,7 @@ public class CarController : MonoBehaviour
 #region Attributes
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
+    private Collider _playerCollider;
     private bool _stopMaxSpeed;
     
     private float _verticalInput;
@@ -36,9 +38,8 @@ public class CarController : MonoBehaviour
     
     private bool _canBeBump = true;
     private float _delayBeBump = .3f;
-
-
-
+    private bool _canSpeed = true;
+    
     #endregion Attributes
 
 #region Properties
@@ -62,6 +63,18 @@ public bool CanBeBump
             StartCoroutine(DelayCanBump());
         } 
     }
+}
+
+public Vector3 MoveForce
+{
+    get => _moveForce;
+    set => _moveForce = value;
+}
+
+public float MaxSpeed
+{
+    get => _maxSpeed;
+    set => _maxSpeed = value;
 }
 
 #endregion Properties
@@ -102,6 +115,7 @@ public bool CanBeBump
             Dash();
         }
     }
+
     #endregion Mono
 
 #region Methodes
@@ -110,7 +124,7 @@ public bool CanBeBump
         float steerInput = Input.GetAxisRaw("Horizontal");
 
         // Rotation proportionnelle à la vitesse, plafonnée
-        float speedFactor = Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / _maxSpeed);
+        float speedFactor = Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / MaxSpeed);
 
         // Courbe : tourne bien dès le départ, légèrement moins vite à haute vitesse
         float rotationFactor = Mathf.Lerp(0.5f, 1f, speedFactor);
@@ -125,35 +139,39 @@ public bool CanBeBump
 
     private void Move()
     {
-        _verticalInput = Input.GetAxis("Vertical");
+        if (_canSpeed)
+        {
+            _verticalInput = Input.GetAxis("Vertical");
 
-        // Accélération
-        _moveForce += transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
+            // Accélération
+            MoveForce += transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
 
-        // Limitation vitesse
-        if (!_stopMaxSpeed)
-            _moveForce = Vector3.ClampMagnitude(_moveForce, _maxSpeed);
+            // Limitation vitesse
+            if (!_stopMaxSpeed)
+                MoveForce = Vector3.ClampMagnitude(MoveForce, MaxSpeed);
 
-        // Traction : réaligne la vélocité vers le forward du véhicule
-        float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
-        Vector3 forward = transform.forward * Vector3.Dot(_moveForce, transform.forward);
-        Vector3 right   = transform.right   * Vector3.Dot(_moveForce, transform.right);
-        _moveForce = forward + right * tractionForce;
+            // Traction : réaligne la vélocité vers le forward du véhicule
+            float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
+            Vector3 forward = transform.forward * Vector3.Dot(MoveForce, transform.forward);
+            Vector3 right = transform.right * Vector3.Dot(MoveForce, transform.right);
+            MoveForce = forward + right * tractionForce;
+        }
 
         // Drag
-        _moveForce *= _drag;
+            MoveForce *= _drag;
 
-        // Application
-        Rigidbody.linearVelocity = new Vector3(
-            _moveForce.x,
-            Rigidbody.linearVelocity.y,
-            _moveForce.z
-        );
+            // Application
+            Rigidbody.linearVelocity = new Vector3(
+                MoveForce.x,
+                Rigidbody.linearVelocity.y,
+                MoveForce.z
+            );
+        
     }
 
     private void Jump()
     {
-        bool canJump = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        bool canJump = Physics.Raycast(  transform.position, Vector3.down, 1.1f);
 
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
@@ -163,14 +181,9 @@ public bool CanBeBump
 
     private void Dash()
     {
-
         Vector3 dashDir = Vector3.zero;
-
-        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.UpArrow))
-            dashDir = transform.forward;
-        else if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.DownArrow) )
-            dashDir = -transform.forward;
-        else if (Input.GetKeyDown(KeyCode.J)  || Input.GetKeyDown(KeyCode.LeftArrow))
+        
+        if (Input.GetKeyDown(KeyCode.J)  || Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
         else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.RightArrow))
             dashDir = transform.right;
@@ -179,7 +192,7 @@ public bool CanBeBump
         {
             StopCoroutine(StopMaxSpeed());
             StartCoroutine(StopMaxSpeed());
-            _moveForce = (dashDir * _dashForce)/_airPenaltyMemory;
+            MoveForce = (dashDir * _dashForce)/_airPenaltyMemory;
         }
     }
 #endregion Methodes
@@ -195,6 +208,13 @@ public bool CanBeBump
         _stopMaxSpeed = false;
         Debug.Log("je remais normal");
         StopCoroutine(StopMaxSpeed());
+    }
+
+    public IEnumerator StopSpeed(float time)
+    {
+        _canSpeed = false;
+        yield return new WaitForSeconds(time);
+        _canSpeed = true;
     }
 
     private IEnumerator DelayCanBump()
