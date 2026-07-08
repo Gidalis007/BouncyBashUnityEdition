@@ -7,6 +7,11 @@ public class CarController : MonoBehaviour
 {
 #region Serialized Fields
     [SerializeField] private bool _playable = true;
+
+    [Header("Teams")] 
+    [SerializeField] private ETeam _myTeam = ETeam.NONE;
+    
+    [Space]
     [Header("Mouvement Base")]
     [SerializeField] private float _moveSpeed = 50f;
     [SerializeField] private float _maxSpeed = 15f;
@@ -24,6 +29,7 @@ public class CarController : MonoBehaviour
     [Space]
     [Header("Gravity")]
     [SerializeField] float _extraGravity = 20f;
+    
 #endregion Serialized Fields
     
 #region Attributes
@@ -75,6 +81,12 @@ public float MaxSpeed
 {
     get => _maxSpeed;
     set => _maxSpeed = value;
+}
+
+public ETeam MyTeam
+{
+    get => _myTeam;
+    set => _myTeam = value;
 }
 
 #endregion Properties

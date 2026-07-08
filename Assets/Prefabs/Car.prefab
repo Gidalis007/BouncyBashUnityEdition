@@ -176,6 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
   _playable: 1
+  _myTeam: 0
   _moveSpeed: 75
   _maxSpeed: 30
   _drag: 0.99
@@ -372,7 +373,7 @@ GameObject:
   - component: {fileID: 2233761623308323841}
   m_Layer: 0
   m_Name: SpringArm
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -470,7 +471,7 @@ GameObject:
   - component: {fileID: 539793643708534962}
   m_Layer: 0
   m_Name: Colliders
-  m_TagString: Player
+  m_TagString: ColliderDetector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

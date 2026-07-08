@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     #region Attributes
     private static GameManager _instance = null;
+    private Dictionary<ETeam, int> _teamsPoints = new Dictionary<ETeam, int>();
     #endregion Attributes
 
     #region Events
@@ -15,6 +16,13 @@ public class GameManager : MonoBehaviour
 
     #region Properties
     public static GameManager Instance { get => _instance; }
+
+    public Dictionary<ETeam, int> TeamsPoints
+    {
+        get => _teamsPoints;
+        set => _teamsPoints = value;
+    }
+
     #endregion Properties
 
     #region Mono
