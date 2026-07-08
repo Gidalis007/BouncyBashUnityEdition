@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
+#region Serialized Fields
     [SerializeField] private bool _playable = true;
     [Header("Mouvement Base")]
     [SerializeField] private float _moveSpeed = 50f;
@@ -22,18 +23,54 @@ public class CarController : MonoBehaviour
     [Space]
     [Header("Gravity")]
     [SerializeField] float _extraGravity = 20f;
+#endregion Serialized Fields
     
+#region Attributes
     private Vector3 _moveForce;
     private Rigidbody _rigidbody;
     private bool _stopMaxSpeed;
+    
     private float _verticalInput;
+    
     private float _airPenaltyMemory;
+    
+    private bool _canBeBump = true;
+    private float _delayBeBump = .3f;
 
-    #region Mono
+
+
+    #endregion Attributes
+
+#region Properties
+
+public Rigidbody Rigidbody
+{
+    get => _rigidbody;
+    set => _rigidbody = value;
+}
+
+public bool CanBeBump
+{
+    get => _canBeBump;
+    set
+    {
+        if (value == true)
+            Debug.LogWarning("CanBeBump can't be set to true");
+        else
+        {
+            _canBeBump = value;
+            StartCoroutine(DelayCanBump());
+        } 
+    }
+}
+
+#endregion Properties
+
+#region Mono
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        Rigidbody = GetComponent<Rigidbody>();
     }
     
     private void FixedUpdate()
@@ -44,7 +81,7 @@ public class CarController : MonoBehaviour
 
             if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
             {
-                _rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
+                Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
                 _airPenaltyMemory = _airPenality;
             }
             else
@@ -63,25 +100,25 @@ public class CarController : MonoBehaviour
         {
             Jump();
             Dash();
-            Test();
         }
     }
-    #endregion
+    #endregion Mono
 
+#region Methodes
     private void Direction()
     {
         float steerInput = Input.GetAxisRaw("Horizontal");
 
         // Rotation proportionnelle à la vitesse, plafonnée
-        float speedFactor = Mathf.Clamp01(_rigidbody.linearVelocity.magnitude / _maxSpeed);
+        float speedFactor = Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / _maxSpeed);
 
         // Courbe : tourne bien dès le départ, légèrement moins vite à haute vitesse
         float rotationFactor = Mathf.Lerp(0.5f, 1f, speedFactor);
 
         float rotationAmount = steerInput * _steerAngle * rotationFactor * Time.fixedDeltaTime * 60f;
 
-        _rigidbody.MoveRotation(
-            _rigidbody.rotation *
+        Rigidbody.MoveRotation(
+            Rigidbody.rotation *
             Quaternion.Euler(0, rotationAmount, 0)
         );
     }
@@ -107,9 +144,9 @@ public class CarController : MonoBehaviour
         _moveForce *= _drag;
 
         // Application
-        _rigidbody.linearVelocity = new Vector3(
+        Rigidbody.linearVelocity = new Vector3(
             _moveForce.x,
-            _rigidbody.linearVelocity.y,
+            Rigidbody.linearVelocity.y,
             _moveForce.z
         );
     }
@@ -120,7 +157,7 @@ public class CarController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
-            _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            Rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         }
     }
 
@@ -145,7 +182,9 @@ public class CarController : MonoBehaviour
             _moveForce = (dashDir * _dashForce)/_airPenaltyMemory;
         }
     }
+#endregion Methodes
 
+#region  Coroutines
     private IEnumerator StopMaxSpeed()
     {
         _stopMaxSpeed = true;
@@ -158,11 +197,11 @@ public class CarController : MonoBehaviour
         StopCoroutine(StopMaxSpeed());
     }
 
-    private void Test()
+    private IEnumerator DelayCanBump()
     {
-        if (Input.GetKey(KeyCode.Joystick1Button0))
-        {
-            Debug.Log("pate");
-        }
+        yield return new WaitForSeconds(_delayBeBump);
+        _canBeBump = true;
     }
+#endregion Courtines
+    
 }
