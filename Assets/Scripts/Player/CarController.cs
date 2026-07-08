@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
+    [SerializeField] private bool _playable = true;
     [Header("Mouvement Base")]
     [SerializeField] private float _moveSpeed = 50f;
     [SerializeField] private float _maxSpeed = 15f;
@@ -37,24 +38,33 @@ public class CarController : MonoBehaviour
     
     private void FixedUpdate()
     {
-        if(!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+        if (_playable)
         {
-            _rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
-            _airPenaltyMemory = _airPenality;
+
+
+            if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+            {
+                _rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
+                _airPenaltyMemory = _airPenality;
+            }
+            else
+            {
+                _airPenaltyMemory = 1;
+            }
+
+            Move();
+            Direction();
         }
-        else
-        {
-            _airPenaltyMemory = 1;
-        }
-        Move();
-        Direction();
     }
 
     private void Update()
     {
-        Jump();
-        Dash();
-        Test();
+        if (_playable)
+        {
+            Jump();
+            Dash();
+            Test();
+        }
     }
     #endregion
 
@@ -141,7 +151,7 @@ public class CarController : MonoBehaviour
         _stopMaxSpeed = true;
         Debug.Log("j'annule la limitation");
             
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         
         _stopMaxSpeed = false;
         Debug.Log("je remais normal");
