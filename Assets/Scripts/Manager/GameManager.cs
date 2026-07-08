@@ -1,16 +1,14 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GameManagerGame : MonoBehaviour
+public class DEBUGGameLoader : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private bool _shouldLoadScene = true;
+    [SerializeField] private string _sceneName = "GameScene";
+
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (_shouldLoadScene)
+            SceneManager.LoadScene(_sceneName);
     }
 }
