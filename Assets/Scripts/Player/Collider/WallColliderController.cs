@@ -19,7 +19,7 @@ public class WallColliderController : MonoBehaviour
             StartCoroutine(_myCarController.StopSpeed(0.7f));
             
             _myCarController.MoveForce = - _myCarController.MoveForce*0.5f;
-            _myCarController.MoveForce = Vector3.ClampMagnitude(_myCarController.MoveForce, _myCarController.MaxSpeed*2);
+            //_myCarController.MoveForce = Vector3.ClampMagnitude(_myCarController.MoveForce, _myCarController.MaxSpeed*2);
 
 
         }

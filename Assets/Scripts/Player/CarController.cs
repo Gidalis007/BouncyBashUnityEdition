@@ -147,8 +147,7 @@ public float MaxSpeed
             MoveForce += transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
 
             // Limitation vitesse
-            if (!_stopMaxSpeed)
-                MoveForce = Vector3.ClampMagnitude(MoveForce, MaxSpeed);
+            MoveForce = Vector3.ClampMagnitude(MoveForce, MaxSpeed);
 
             // Traction : réaligne la vélocité vers le forward du véhicule
             float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
@@ -183,9 +182,13 @@ public float MaxSpeed
     {
         Vector3 dashDir = Vector3.zero;
         
-        if (Input.GetKeyDown(KeyCode.J)  || Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.UpArrow)) 
+            dashDir = transform.forward;
+        else if (Input.GetKey(KeyCode.DownArrow))
+            dashDir = -transform.forward;
+        else if ( Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
-        else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
             dashDir = transform.right;
         
         if (dashDir != Vector3.zero)
@@ -200,12 +203,14 @@ public float MaxSpeed
 #region  Coroutines
     private IEnumerator StopMaxSpeed()
     {
-        _stopMaxSpeed = true;
+        //_stopMaxSpeed = true;
+        MaxSpeed = MaxSpeed * 2f;
         Debug.Log("j'annule la limitation");
             
         yield return new WaitForSeconds(0.5f);
         
-        _stopMaxSpeed = false;
+        //_stopMaxSpeed = false;
+        MaxSpeed = MaxSpeed /2 ;
         Debug.Log("je remais normal");
         StopCoroutine(StopMaxSpeed());
     }
