@@ -33,7 +33,6 @@ public class CarController : MonoBehaviour
 #endregion Serialized Fields
     
 #region Attributes
-    private Vector3 _moveForce;
     private Rigidbody _rigidbody;
     private Collider _playerCollider;
     private bool _stopMaxSpeed;
@@ -71,11 +70,6 @@ public bool CanBeBump
     }
 }
 
-public Vector3 MoveForce
-{
-    get => _moveForce;
-    set => _moveForce = value;
-}
 
 public float MaxSpeed
 {
@@ -156,28 +150,33 @@ public ETeam MyTeam
             _verticalInput = Input.GetAxis("Vertical");
 
             // Accélération
-            MoveForce += transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
+            Vector3 acceleration = transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
+            Rigidbody.AddForce(acceleration, ForceMode.VelocityChange);
 
-            // Limitation vitesse
-            MoveForce = Vector3.ClampMagnitude(MoveForce, MaxSpeed);
+            // Limitation vitesse (horizontal uniquement)
+            Vector3 flatVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
+            if (flatVelocity.magnitude > MaxSpeed)
+            {
+                Vector3 capped = flatVelocity.normalized * MaxSpeed;
+                Rigidbody.linearVelocity = new Vector3(capped.x, Rigidbody.linearVelocity.y, capped.z);
+            }
 
-            // Traction : réaligne la vélocité vers le forward du véhicule
+            // Traction
+            flatVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
-            Vector3 forward = transform.forward * Vector3.Dot(MoveForce, transform.forward);
-            Vector3 right = transform.right * Vector3.Dot(MoveForce, transform.right);
-            MoveForce = forward + right * tractionForce;
+            Vector3 forward = transform.forward * Vector3.Dot(flatVelocity, transform.forward);
+            Vector3 right   = transform.right   * Vector3.Dot(flatVelocity, transform.right);
+            Vector3 tractedVelocity = forward + right * tractionForce;
+            Rigidbody.linearVelocity = new Vector3(tractedVelocity.x, Rigidbody.linearVelocity.y, tractedVelocity.z);
         }
 
         // Drag
-            MoveForce *= _drag;
-
-            // Application
-            Rigidbody.linearVelocity = new Vector3(
-                MoveForce.x,
-                Rigidbody.linearVelocity.y,
-                MoveForce.z
-            );
-        
+        Vector3 draggedVelocity = new Vector3(
+            Rigidbody.linearVelocity.x * _drag,
+            Rigidbody.linearVelocity.y,
+            Rigidbody.linearVelocity.z * _drag
+        );
+        Rigidbody.linearVelocity = draggedVelocity;
     }
 
     private void Jump()
@@ -194,20 +193,26 @@ public ETeam MyTeam
     {
         Vector3 dashDir = Vector3.zero;
         
-        if (Input.GetKey(KeyCode.UpArrow)) 
+        /*if (Input.GetKey(KeyCode.UpArrow)) 
             dashDir = transform.forward;
         else if (Input.GetKey(KeyCode.DownArrow))
-            dashDir = -transform.forward;
-        else if ( Input.GetKeyDown(KeyCode.LeftArrow))
+            dashDir = -transform.forward;*/
+        if ( Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
         else if (Input.GetKeyDown(KeyCode.RightArrow))
             dashDir = transform.right;
-        
+
         if (dashDir != Vector3.zero)
         {
             StopCoroutine(StopMaxSpeed());
             StartCoroutine(StopMaxSpeed());
-            MoveForce = (dashDir * _dashForce)/_airPenaltyMemory;
+            Vector3 dashVelocity = (dashDir * _dashForce) / _airPenaltyMemory;
+
+            Rigidbody.linearVelocity = new Vector3(
+                dashVelocity.x,
+                Rigidbody.linearVelocity.y, 
+                dashVelocity.z
+            );
         }
     }
 #endregion Methodes
@@ -215,15 +220,15 @@ public ETeam MyTeam
 #region  Coroutines
     private IEnumerator StopMaxSpeed()
     {
-        //_stopMaxSpeed = true;
+
         MaxSpeed = MaxSpeed * 2f;
-        Debug.Log("j'annule la limitation");
+
             
         yield return new WaitForSeconds(0.5f);
         
-        //_stopMaxSpeed = false;
+
         MaxSpeed = MaxSpeed /2 ;
-        Debug.Log("je remais normal");
+
         StopCoroutine(StopMaxSpeed());
     }
 
