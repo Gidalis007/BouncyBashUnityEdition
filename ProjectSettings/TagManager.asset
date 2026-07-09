@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ColliderDetector
   - Brush
+  - Wall
   layers:
   - Default
   - TransparentFX

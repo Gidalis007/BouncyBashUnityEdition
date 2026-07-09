@@ -4,11 +4,6 @@
     <list default="true" id="b5bab456-0625-4132-98c7-30717be6959b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/Collider/ForwardColliderController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/Collider/ForwardColliderController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/Collider/WallColliderController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/Collider/WallColliderController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/PainterController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WinLose/PainterController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/brick_pavement_03_1k.gltf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/brick_pavement_03_1k.gltf.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,6 +24,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player/Collider/WallColliderController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player/Enumerateur/Enumerateur.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/WinLose/WallBounceController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/WinLose/WallColliderBrushController.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -122,7 +118,7 @@
       <workItem from="1783499351753" duration="537000" />
       <workItem from="1783505140264" duration="142000" />
       <workItem from="1783516351855" duration="9182000" />
-      <workItem from="1783585401927" duration="10823000" />
+      <workItem from="1783585401927" duration="15206000" />
     </task>
     <servers />
   </component>
