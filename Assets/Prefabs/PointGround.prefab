@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6619488833754932054}
   - component: {fileID: 9115250919556452614}
-  - component: {fileID: 7389230323923201086}
   m_Layer: 0
   m_Name: PointCollider
   m_TagString: ColliderDetector
@@ -54,18 +53,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 20, z: 10}
   m_Center: {x: 0, y: 9, z: 0}
---- !u!114 &7389230323923201086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2899428996851124684}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1b707d9ee8e41edf9f4c3adce022c7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlatformController
 --- !u!1 &3928240642246200571
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,6 +65,7 @@ GameObject:
   - component: {fileID: 8194271269338565908}
   - component: {fileID: 4850210321288249168}
   - component: {fileID: 4042730915694065059}
+  - component: {fileID: 3003046107580715250}
   m_Layer: 0
   m_Name: PointGround
   m_TagString: Untagged
@@ -180,3 +168,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &3003046107580715250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3928240642246200571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b707d9ee8e41edf9f4c3adce022c7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlatformController
+  textureResolution: 256
+  colorNone: {r: 1, g: 1, b: 1, a: 1}
+  colorBlue: {r: 0, g: 0, b: 1, a: 1}
+  colorRed: {r: 1, g: 0, b: 0, a: 1}
+  captureThreshold: 0.6
+  floodFillOnCapture: 1
+  OnPlatformCaptured:
+    m_PersistentCalls:
+      m_Calls: []

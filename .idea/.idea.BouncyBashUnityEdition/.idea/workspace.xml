@@ -3,13 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="b5bab456-0625-4132-98c7-30717be6959b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Car.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Car.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Ressource.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Ressource/M_Vert.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Ressource/M_Vert.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/PointGround.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/PointGround.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Material/M_Yellow.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/Material/M_Yellow.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/GameManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/CarController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/CarController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TutorialInfo/Icons/URP.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TutorialInfo/Icons/URP.png.meta" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,6 +119,7 @@
       <workItem from="1783499351753" duration="537000" />
       <workItem from="1783505140264" duration="142000" />
       <workItem from="1783516351855" duration="9182000" />
+      <workItem from="1783585401927" duration="7242000" />
     </task>
     <servers />
   </component>
@@ -153,6 +152,19 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs</url>
+          <line>74</line>
+          <properties documentPath="$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs" containingFunctionPresentation="Method 'InitTexture'">
+            <startOffsets>
+              <option value="2510" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2548" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
