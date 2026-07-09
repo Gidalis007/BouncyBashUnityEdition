@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16719aafc3b52692ea8f9788eb9d0a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
-  _bumpForce: 1.2
+  _bumpForce: 1.5
   _jumpBumpForce: 7
 --- !u!1 &3101965153357067558
 GameObject:
@@ -82,8 +82,9 @@ GameObject:
   - component: {fileID: 7262763549086756167}
   - component: {fileID: 2935444871970650993}
   - component: {fileID: 7726474570915212645}
+  - component: {fileID: 4896234433225140025}
   m_Layer: 0
-  m_Name: Car
+  m_Name: Car 1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -176,14 +177,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
   _playable: 1
-  _myTeam: 0
-  _moveSpeed: 75
-  _maxSpeed: 30
+  _myTeam: 1
+  _moveSpeed: 50
+  _maxSpeed: 20
   _drag: 0.99
-  _steerAngle: 5
+  _steerAngle: 4
   _traction: 0.1
   _jumpForce: 15
-  _dashForce: 40
+  _dashForce: 25
   _airPenality: 2
   _extraGravity: 20
 --- !u!54 &2935444871970650993
@@ -234,6 +235,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4896234433225140025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3101965153357067558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ab2f8d23a9a775b9054058d71b5342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallBounceControllerWallBounceController
+  _minBounceSpeed: 5
+  _maxBounceSpeed: 30
+  _bounciness: 0.8
+  _wallTags:
+  - Wall
+  _pushForce: 2
 --- !u!1 &4648074220949399472
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,72 +413,6 @@ Transform:
   - {fileID: 8942551597863881098}
   m_Father: {fileID: 908184263105680987}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4964839227779128401
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8100219650308259694}
-  - component: {fileID: 1901536716068510488}
-  - component: {fileID: 424122344522023066}
-  m_Layer: 0
-  m_Name: Wall
-  m_TagString: ColliderDetector
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8100219650308259694
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4964839227779128401}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.214, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 539793643708534962}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1901536716068510488
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4964839227779128401}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 0.5, z: 1.25}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &424122344522023066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4964839227779128401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d94afa9f4547060cb7b1186fbd4281e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WallColliderController
 --- !u!1 &5192104282782119738
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,7 +428,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &539793643708534962
 Transform:
   m_ObjectHideFlags: 0
@@ -490,60 +443,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7649500166950519449}
-  - {fileID: 8100219650308259694}
-  - {fileID: 3198372084324833770}
   m_Father: {fileID: 908184263105680987}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5990816865692564893
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3198372084324833770}
-  - component: {fileID: 3478398937809489343}
-  m_Layer: 0
-  m_Name: Down
-  m_TagString: ColliderDetector
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3198372084324833770
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5990816865692564893}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.537, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 539793643708534962}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3478398937809489343
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5990816865692564893}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 0.04, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}

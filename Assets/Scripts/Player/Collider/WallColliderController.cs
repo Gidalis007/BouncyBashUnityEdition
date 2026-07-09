@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class WallColliderController : MonoBehaviour
 {
-    private CarController _myCarController;
+    /*private CarController _myCarController;
 
     private void Awake()
     {
@@ -23,5 +23,7 @@ public class WallColliderController : MonoBehaviour
 
 
         }
-    }
+    }*/
+    
+    
 }
