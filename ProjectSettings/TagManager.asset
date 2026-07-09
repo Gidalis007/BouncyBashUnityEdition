@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - ColliderDetector
+  - Brush
   layers:
   - Default
   - TransparentFX

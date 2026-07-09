@@ -476,7 +476,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformPainterController
   team: 2
   brushRadius: 2
-  paintInterval: -1
+  paintInterval: 0
 --- !u!65 &2093623791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -564,7 +564,7 @@ Transform:
   m_GameObject: {fileID: 2093623789}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.34, y: 1.84, z: 45.4}
+  m_LocalPosition: {x: -6.34, y: 1.52, z: 45.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -595,7 +595,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1001 &4585827576286888093
 PrefabInstance:
@@ -606,20 +606,40 @@ PrefabInstance:
     m_TransformParent: {fileID: 253315805}
     m_Modifications:
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+      propertyPath: colorRed.b
+      value: 0.3291626
+      objectReference: {fileID: 0}
+    - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+      propertyPath: colorRed.g
+      value: 0.3291626
+      objectReference: {fileID: 0}
+    - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+      propertyPath: colorRed.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+      propertyPath: colorBlue.g
+      value: 0.8235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+      propertyPath: colorBlue.r
+      value: 0.32941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: colorNone.b
-      value: 0.4509804
+      value: 0.29400444
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: colorNone.g
-      value: 0.4862745
+      value: 0.31063727
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: colorNone.r
-      value: 0.8
+      value: 0.4584846
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: captureThreshold
-      value: 0.6
+      value: 0.78
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: textureResolution

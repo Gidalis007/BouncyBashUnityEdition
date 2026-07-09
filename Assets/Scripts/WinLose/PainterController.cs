@@ -25,6 +25,8 @@ public class PainterController : MonoBehaviour
         get => team;
         set => team = value;
     }
+    
+    public Rigidbody Rigidbody => _rb;
 
     private void Awake()
     {

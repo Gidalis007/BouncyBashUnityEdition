@@ -12,7 +12,7 @@ public class WallColliderController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "ColliderDetector" || other.tag == "Untagged")
+        if (other.tag != "ColliderDetector" || other.tag == "Untagged" || other.tag == "Brush")
         {
             
             StopCoroutine("StopSpeed");

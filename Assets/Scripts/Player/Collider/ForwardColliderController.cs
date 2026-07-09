@@ -26,15 +26,18 @@ public class ForwardColliderController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Vector3 bumpDirection;
-        CarController AdverseCar = other.gameObject.GetComponentInParent<CarController>();
+        CarController adverseCar = other.gameObject.GetComponentInParent<CarController>();
+        PainterController painterController = other.gameObject.GetComponent<PainterController>();
         
-        if ( !other.gameObject.GetComponentInParent<CarController>() || AdverseCar.CanBeBump != true )
+        if ( (!other.gameObject.GetComponentInParent<CarController>() || adverseCar.CanBeBump != true ) && (!other.gameObject.GetComponent<PainterController>()))
             return;
         
-        AdverseCar.CanBeBump = false;
+
         
         if (other.tag == "Player")
         {
+            adverseCar.CanBeBump = false;
+            
             bumpDirection.x =  _myCarController.Rigidbody.linearVelocity.x 
                                * _bumpForce;
             bumpDirection.z =  _myCarController.Rigidbody.linearVelocity.z 
@@ -42,8 +45,19 @@ public class ForwardColliderController : MonoBehaviour
             bumpDirection.y = _myCarController.Rigidbody.linearVelocity.y
                               +_jumpBumpForce
                               *_bumpForce;
-            
-            AdverseCar.Rigidbody.AddForce(bumpDirection, ForceMode.Impulse);
+            adverseCar?.Rigidbody.AddForce(bumpDirection, ForceMode.Impulse);
+        }
+        
+        else if (other.tag == "Brush")
+        {
+            bumpDirection.x =  _myCarController.Rigidbody.linearVelocity.x 
+                               * _bumpForce;
+            bumpDirection.z =  _myCarController.Rigidbody.linearVelocity.z 
+                               * _bumpForce;
+            bumpDirection.y = _myCarController.Rigidbody.linearVelocity.y
+                              //+_jumpBumpForce
+                              *_bumpForce;
+            painterController?.Rigidbody.AddForce(bumpDirection, ForceMode.Impulse);
         }
     }
 }
