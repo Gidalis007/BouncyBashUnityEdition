@@ -29,21 +29,23 @@ public class ForwardColliderController : MonoBehaviour
         _myCarController = gameObject.GetComponentInParent<CarController>();
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        StartCoroutine(Bump(other.gameObject));
-    }
+        Bump(other.gameObject);
 
-    private IEnumerator Bump(GameObject bump)
+    }
+    
+
+    private void Bump(GameObject bump)
     {
         bool isPushableTag = Array.Exists(_pushableTags, tag => tag == bump.tag);
 
-        if (!isPushableTag || !_canPush) yield break;
+        if (!isPushableTag) return;
         
         _canPush = false;
         
         Rigidbody targetRb = bump.GetComponent<Rigidbody>();
-        if (targetRb == null) yield break;
+        if (targetRb == null) return;
 
         Vector3 pushDir = new Vector3(
             _myCarController.Rigidbody.linearVelocity.x,
@@ -57,8 +59,5 @@ public class ForwardColliderController : MonoBehaviour
                 : _myCarController.transform.forward * _minPushForce;
 
         targetRb.AddForce(pushDir, ForceMode.Impulse);
-        
-        yield return new WaitForSeconds(_maxPushSecond);
-        _canPush = true;
     }
 }
