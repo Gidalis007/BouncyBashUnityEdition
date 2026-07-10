@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2642565665501501919}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.593}
+  m_LocalPosition: {x: 0, y: 0, z: 0.549}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52,7 +52,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 0.1}
+  m_Size: {x: 1.25, y: 1.1, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5806595628885985201
 MonoBehaviour:
@@ -66,8 +66,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16719aafc3b52692ea8f9788eb9d0a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
-  _bumpForce: 1.5
+  _bumpForce: 2
   _jumpBumpForce: 7
+  _minPushForce: 5
+  _pushableTags:
+  - Player
+  _maxPushSecond: 0.1
+--- !u!1 &2683102523705827823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6380664838935643876}
+  - component: {fileID: 2608315783412788178}
+  m_Layer: 0
+  m_Name: BounceBrush
+  m_TagString: ColliderDetector
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6380664838935643876
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2683102523705827823}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 539793643708534962}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2608315783412788178
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2683102523705827823}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.05, y: 1.05, z: 1.025}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3101965153357067558
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +156,7 @@ Transform:
   m_GameObject: {fileID: 3101965153357067558}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6.427178, y: 1.8, z: 6.1761217}
   m_LocalScale: {x: 0.5, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -178,8 +235,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarController
   _playable: 1
   _myTeam: 1
-  _moveSpeed: 50
-  _maxSpeed: 20
+  _moveSpeed: 70
+  _maxSpeed: 30
   _drag: 0.99
   _steerAngle: 4
   _traction: 0.1
@@ -197,7 +254,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0
+  m_AngularDamping: 0.0001
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -428,7 +485,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &539793643708534962
 Transform:
   m_ObjectHideFlags: 0
@@ -443,5 +500,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7649500166950519449}
+  - {fileID: 6380664838935643876}
   m_Father: {fileID: 908184263105680987}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

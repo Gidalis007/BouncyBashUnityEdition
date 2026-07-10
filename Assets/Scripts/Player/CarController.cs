@@ -115,6 +115,7 @@ public ETeam MyTeam
 
     private void Update()
     {
+
         if (_playable)
         {
             Jump();
@@ -193,10 +194,10 @@ public ETeam MyTeam
     {
         Vector3 dashDir = Vector3.zero;
         
-        /*if (Input.GetKey(KeyCode.UpArrow)) 
+        if (Input.GetKey(KeyCode.UpArrow)) 
             dashDir = transform.forward;
         else if (Input.GetKey(KeyCode.DownArrow))
-            dashDir = -transform.forward;*/
+            dashDir = -transform.forward;
         if ( Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
         else if (Input.GetKeyDown(KeyCode.RightArrow))

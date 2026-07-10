@@ -169,10 +169,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ab2f8d23a9a775b9054058d71b5342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallBounceControllerWallBounceController
-  _minBounceSpeed: 15
+  _minBounceSpeed: 30
+  _maxBounceSpeed: 100
   _bounciness: 2
   _wallTags:
   - Wall
   - Player
   - Brush
-  _pushForce: 5
+  _pushForce: 10

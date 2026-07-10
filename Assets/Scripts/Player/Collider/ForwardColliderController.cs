@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class ForwardColliderController : MonoBehaviour
@@ -7,15 +8,20 @@ public class ForwardColliderController : MonoBehaviour
 
     [SerializeField] private float _bumpForce = 1.2f;
     [SerializeField] private float _jumpBumpForce = 5f;
+    [SerializeField] private float _minPushForce = 5f;
+    [SerializeField] private string[] _pushableTags = { "Brush", "Player" };
+
+    [SerializeField] private float _maxPushSecond = 0.1f;
 
     #endregion SerializeFields
-    
+
     #region Attributes
-    
+
+    private bool _canPush = true;
     private Collider _forwardCollider;
     private CarController _myCarController;
-    
-    #endregion  Attributes
+
+    #endregion Attributes
 
     private void Awake()
     {
@@ -23,41 +29,36 @@ public class ForwardColliderController : MonoBehaviour
         _myCarController = gameObject.GetComponentInParent<CarController>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        Vector3 bumpDirection;
-        CarController adverseCar = other.gameObject.GetComponentInParent<CarController>();
-        PainterController painterController = other.gameObject.GetComponent<PainterController>();
-        
-        if ( (!other.gameObject.GetComponentInParent<CarController>() || adverseCar.CanBeBump != true ) && (!other.gameObject.GetComponent<PainterController>()))
-            return;
-        
+        StartCoroutine(Bump(other.gameObject));
+    }
 
+    private IEnumerator Bump(GameObject bump)
+    {
+        bool isPushableTag = Array.Exists(_pushableTags, tag => tag == bump.tag);
+
+        if (!isPushableTag || !_canPush) yield break;
         
-        if (other.tag == "Player")
-        {
-            adverseCar.CanBeBump = false;
-            
-            bumpDirection.x =  _myCarController.Rigidbody.linearVelocity.x 
-                               * _bumpForce;
-            bumpDirection.z =  _myCarController.Rigidbody.linearVelocity.z 
-                               * _bumpForce;
-            bumpDirection.y = _myCarController.Rigidbody.linearVelocity.y
-                              +_jumpBumpForce
-                              *_bumpForce;
-            adverseCar?.Rigidbody.AddForce(bumpDirection, ForceMode.Impulse);
-        }
+        _canPush = false;
         
-        else if (other.tag == "Brush")
-        {
-            bumpDirection.x =  _myCarController.Rigidbody.linearVelocity.x 
-                               * _bumpForce;
-            bumpDirection.z =  _myCarController.Rigidbody.linearVelocity.z 
-                               * _bumpForce;
-            bumpDirection.y = _myCarController.Rigidbody.linearVelocity.y
-                              //+_jumpBumpForce
-                              *_bumpForce;
-            painterController?.Rigidbody.AddForce(bumpDirection, ForceMode.Impulse);
-        }
+        Rigidbody targetRb = bump.GetComponent<Rigidbody>();
+        if (targetRb == null) yield break;
+
+        Vector3 pushDir = new Vector3(
+            _myCarController.Rigidbody.linearVelocity.x,
+            0f,
+            _myCarController.Rigidbody.linearVelocity.z
+        );
+
+        if (pushDir.magnitude < _minPushForce)
+            pushDir = pushDir.magnitude > 0.01f
+                ? pushDir.normalized * _minPushForce
+                : _myCarController.transform.forward * _minPushForce;
+
+        targetRb.AddForce(pushDir, ForceMode.Impulse);
+        
+        yield return new WaitForSeconds(_maxPushSecond);
+        _canPush = true;
     }
 }

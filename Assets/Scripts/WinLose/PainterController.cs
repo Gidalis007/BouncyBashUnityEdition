@@ -1,10 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Cube mobile faisant office de "stylo". Tant qu'il touche un PlatformController,
-/// il peint l'endroit où il passe avec la couleur de sa team.
-/// </summary>
-[RequireComponent(typeof(Collider))]
 public class PainterController : MonoBehaviour
 {
 
