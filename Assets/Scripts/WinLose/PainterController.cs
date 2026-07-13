@@ -3,7 +3,7 @@ using UnityEngine;
 public class PainterController : MonoBehaviour
 {
 
-    [SerializeField] private ETeam team = ETeam.BLUE;
+    [SerializeField] private ETeam _team = ETeam.BLUE;
     
     [Space]
     [Tooltip("Rayon du pinceau mètres")]
@@ -17,15 +17,19 @@ public class PainterController : MonoBehaviour
 
     public ETeam Team
     {
-        get => team;
-        set => team = value;
+        get => _team;
+        set
+        {
+            _team = value;
+            GetComponent<Renderer>().material.color = _team == ETeam.BLUE ? Color.blue : Color.red;
+        }
     }
     
     public Rigidbody Rigidbody => _rb;
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>(); // optionnel, peut être null
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -38,9 +42,7 @@ public class PainterController : MonoBehaviour
     {
         TryPaint(collision.collider);
     }
-
-    // Utilisé si l'un des deux colliders (painter ou plateforme) est marqué "Is Trigger".
-    // -> Garde seulement celle des deux méthodes qui correspond à ton setup pour éviter les doublons.
+    
     private void OnTriggerStay(Collider other)
     {
         TryPaint(other);
@@ -53,7 +55,7 @@ public class PainterController : MonoBehaviour
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        platform.Paint(transform.position, team, brushRadius);
+        platform.Paint(transform.position, _team, brushRadius);
         _paintTimer = 0f;
     }
 }

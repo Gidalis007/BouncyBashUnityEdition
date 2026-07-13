@@ -49,15 +49,15 @@ public class ForwardColliderController : MonoBehaviour
 
         Vector3 pushDir = new Vector3(
             _myCarController.Rigidbody.linearVelocity.x,
-            0f,
+            targetRb.linearVelocity.y + _jumpBumpForce,
             _myCarController.Rigidbody.linearVelocity.z
         );
-
-        if (pushDir.magnitude < _minPushForce)
-            pushDir = pushDir.magnitude > 0.01f
-                ? pushDir.normalized * _minPushForce
-                : _myCarController.transform.forward * _minPushForce;
-
+        
         targetRb.AddForce(pushDir, ForceMode.Impulse);
+
+        if (bump.GetComponent<PainterController>())
+        {
+            bump.GetComponent<PainterController>().Team = _myCarController.MyTeam;
+        }
     }
 }
