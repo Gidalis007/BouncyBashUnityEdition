@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class CarController : MonoBehaviour
+public class CarController : NetworkBehaviour
 {
 #region Serialized Fields
     [SerializeField] private bool _playable = true;
@@ -44,6 +45,10 @@ public class CarController : MonoBehaviour
     private bool _canBeBump = true;
     private float _delayBeBump = .3f;
     private bool _canSpeed = true;
+    
+    private Camera _camera;
+    
+    NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     
     #endregion Attributes
 
@@ -90,37 +95,49 @@ public ETeam MyTeam
     private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
+        
     }
-    
+
+    public override void OnNetworkSpawn()
+    {
+        _camera = GetComponentInChildren<Camera>();
+
+        if (!IsOwner)
+        {
+            _camera.enabled = false;
+        }
+    }
+
+
     private void FixedUpdate()
     {
-        if (_playable)
+        if (!_playable || !IsOwner) return;
+
+
+
+        if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
         {
-
-
-            if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
-            {
-                Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
-                _airPenaltyMemory = _airPenality;
-            }
-            else
-            {
-                _airPenaltyMemory = 1;
-            }
-
-            Move();
-            Direction();
+            Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
+            _airPenaltyMemory = _airPenality;
         }
+        else
+        {
+            _airPenaltyMemory = 1;
+        }
+
+        Move();
+        Direction();
+
     }
 
     private void Update()
     {
 
-        if (_playable)
-        {
-            Jump();
-            Dash();
-        }
+        if (!_playable || IsOwner) return;
+
+        Jump();
+        Dash();
+
     }
 
     #endregion Mono
