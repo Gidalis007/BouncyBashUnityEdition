@@ -48,6 +48,7 @@ public class CarController : NetworkBehaviour
     
     private Camera _camera;
     
+    private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     
     #endregion Attributes
 
