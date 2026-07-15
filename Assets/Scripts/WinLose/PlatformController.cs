@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,7 +11,7 @@ using UnityEngine.Events;
 /// </summary>
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Collider))]
-public class PlatformController : MonoBehaviour
+public class PlatformController : NetworkBehaviour
 {
     [System.Serializable]
     public class TeamEvent : UnityEvent<ETeam> { }

@@ -1,9 +1,10 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class PainterController : MonoBehaviour
+public class PainterController : NetworkBehaviour
 {
 
-    [SerializeField] private ETeam _team = ETeam.BLUE;
+    [SerializeField] private NetworkVariable<ETeam> _team = new NetworkVariable<ETeam>(ETeam.BLUE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     
     [Space]
     [Tooltip("Rayon du pinceau mètres")]
@@ -17,11 +18,11 @@ public class PainterController : MonoBehaviour
 
     public ETeam Team
     {
-        get => _team;
+        get => _team.Value;
         set
         {
-            _team = value;
-            GetComponent<Renderer>().material.color = _team == ETeam.BLUE ? Color.blue : Color.red;
+            _team.Value = value;
+            GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
         }
     }
     
@@ -55,7 +56,7 @@ public class PainterController : MonoBehaviour
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        platform.Paint(transform.position, _team, brushRadius);
+        platform.Paint(transform.position, Team, brushRadius);
         _paintTimer = 0f;
     }
 }

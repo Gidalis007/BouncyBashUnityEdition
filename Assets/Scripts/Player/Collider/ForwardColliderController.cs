@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Unity.Netcode;
 
 public class ForwardColliderController : MonoBehaviour
 {
@@ -29,15 +30,19 @@ public class ForwardColliderController : MonoBehaviour
         _myCarController = gameObject.GetComponentInParent<CarController>();
     }
 
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)] 
     private void OnTriggerEnter(Collider other)
     {
-        Bump(other.gameObject);
+        BumpRpc(other.gameObject);
 
     }
-    
 
-    private void Bump(GameObject bump)
+
+//    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)] 
+  //[Rpc(SendTo.Server, Delivery = RpcDelivery.Reliable)]
+    private void BumpRpc(GameObject bump)
     {
+
         bool isPushableTag = Array.Exists(_pushableTags, tag => tag == bump.tag);
 
         if (!isPushableTag) return;
@@ -46,6 +51,7 @@ public class ForwardColliderController : MonoBehaviour
         
         Rigidbody targetRb = bump.GetComponent<Rigidbody>();
         if (targetRb == null) return;
+        Debug.LogError("BumpRpc");
 
         Vector3 pushDir = new Vector3(
             _myCarController.Rigidbody.linearVelocity.x,
@@ -60,4 +66,6 @@ public class ForwardColliderController : MonoBehaviour
             bump.GetComponent<PainterController>().Team = _myCarController.MyTeam;
         }
     }
+
+
 }

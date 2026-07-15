@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 public class NetworkStartUI : MonoBehaviour
@@ -19,6 +20,8 @@ public class NetworkStartUI : MonoBehaviour
    
    public void Host()
    {
+      
+      //NetworkManager.Singleton.SetServer
       NetworkManager.Singleton.StartHost();
       transform.gameObject.SetActive(false);
    }
