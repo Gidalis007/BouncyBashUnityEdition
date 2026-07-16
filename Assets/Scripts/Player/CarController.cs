@@ -10,7 +10,7 @@ public class CarController : NetworkBehaviour
     [SerializeField] private bool _playable = true;
 
     [Header("Teams")] 
-    [SerializeField] private ETeam _myTeam = ETeam.NONE;
+    [SerializeField] private NetworkVariable<ETeam>  _myTeam = new NetworkVariable<ETeam>(ETeam.NONE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     
     [Space]
     [Header("Mouvement Base")]
@@ -88,8 +88,8 @@ public float MaxSpeed
 
 public ETeam MyTeam
 {
-    get => _myTeam;
-    set => _myTeam = value;
+    get => _myTeam.Value;
+    set => _myTeam.Value = value;
 }
 
 #endregion Properties

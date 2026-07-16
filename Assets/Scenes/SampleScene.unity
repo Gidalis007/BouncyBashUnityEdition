@@ -353,7 +353,6 @@ GameObject:
   - component: {fileID: 989434796}
   - component: {fileID: 989434795}
   - component: {fileID: 989434797}
-  - component: {fileID: 989434798}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -449,18 +448,6 @@ MonoBehaviour:
     PacketDelayMS: 0
     PacketJitterMS: 0
     PacketDropRate: 0
---- !u!114 &989434798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 989434794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa931e8a8f0e4ee538d5bd357623f7b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetworkPhysicsTicker
 --- !u!1 &1173600958 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}

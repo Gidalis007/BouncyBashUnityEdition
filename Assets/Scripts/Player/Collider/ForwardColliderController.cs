@@ -37,18 +37,14 @@ public class ForwardColliderController : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Bump(other.GetComponent<NetworkObject>());
+        Bump(other.gameObject);
     }
 
     #endregion Mono
     
     #region Methods
-    private void Bump(NetworkObjectReference bumpRef)
+    private void Bump(GameObject bump)
     {
-        if (!bumpRef.TryGet(out NetworkObject bumpNetworkObject))
-            return;
-
-        GameObject bump = bumpNetworkObject.gameObject;
 
         bool isPushableTag = Array.Exists(_pushableTags, tag => tag == bump.tag);
 

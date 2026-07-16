@@ -81,7 +81,6 @@ public class PainterController : NetworkBehaviour
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void ChangeOwnerRpc(ulong ownerClientId)
     {
-        NetworkObject test = GetComponent<NetworkObject>();
         GetComponent<NetworkObject>().ChangeOwnership(ownerClientId);
     }
     
@@ -90,7 +89,8 @@ public class PainterController : NetworkBehaviour
     public void ChangeTeamRpc(ETeam team)
     {
         _team.Value = team;
-        ChangeColorRpc(team == ETeam.BLUE ? Color.blue : Color.red);
+        Debug.LogError(team.ToString());
+        ChangeColorRpc(team == ETeam.BLUE ? Color.blue :  team == ETeam.RED ? Color.red : Color.black);
     }
 
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
