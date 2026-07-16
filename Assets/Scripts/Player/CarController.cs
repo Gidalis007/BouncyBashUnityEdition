@@ -132,14 +132,9 @@ public ETeam MyTeam
 
     private void Update()
     {
-
         if (!_playable || !IsOwner) return;
         Jump();
         Dash();
-        if (Input.GetKey(KeyCode.U))
-        {
-            TestRpc();
-        }
     }
 
     #endregion Mono
@@ -235,17 +230,7 @@ public ETeam MyTeam
             );
         }
     }
-
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    private void TestRpc()
-    {
-        
-            PainterController obj = FindObjectOfType<PainterController>();
-            if (obj == null) return;
-            obj.Rigidbody.AddForce(new Vector3(20, 0, 20), ForceMode.Impulse);
-            Debug.LogError("NormalyPush");
-
-    }
+    
 
     #endregion Methodes
 

@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ public class PainterController : NetworkBehaviour
 
     private Rigidbody _rb;
     private float _paintTimer;
-
+    
     public ETeam Team
     {
         get => _team.Value;
@@ -24,6 +25,13 @@ public class PainterController : NetworkBehaviour
             _team.Value = value;
             GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
         }
+    }
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public void ChangeTeamRpc(ETeam team)
+    {
+        _team.Value = team;
+        GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
     }
     
     public Rigidbody Rigidbody => _rb;
@@ -59,4 +67,19 @@ public class PainterController : NetworkBehaviour
         platform.Paint(transform.position, Team, brushRadius);
         _paintTimer = 0f;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+
+        if (collision.gameObject.CompareTag("Player") && collision.gameObject.TryGetComponent(out NetworkObject networkObject))
+            ChangeOwnerRpc(networkObject.OwnerClientId);
+    }
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void ChangeOwnerRpc(ulong ownerClientId)
+    {
+        NetworkObject test = GetComponent<NetworkObject>();
+        GetComponent<NetworkObject>().ChangeOwnership(ownerClientId);
+    }
+
 }

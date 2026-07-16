@@ -558,7 +558,7 @@ MonoBehaviour:
   RotationMaxInterpolationTime: 0.1
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
+  AuthorityMode: 1
   TickSyncChildren: 0
   UseUnreliableDeltas: 1
   SyncPositionX: 1
@@ -570,7 +570,7 @@ MonoBehaviour:
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
-  PositionThreshold: 0
+  PositionThreshold: 0.1
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
@@ -1519,6 +1519,10 @@ PrefabInstance:
     - target: {fileID: 6185197652380681174, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8532858937123349632, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
+      propertyPath: m_LinearDamping
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3377062356957307792, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}

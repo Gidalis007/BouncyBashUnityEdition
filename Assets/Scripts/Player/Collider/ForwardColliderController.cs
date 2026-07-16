@@ -32,12 +32,12 @@ public class ForwardColliderController : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        BumpRpc(other.GetComponent<NetworkObject>());
+        Bump(other.GetComponent<NetworkObject>());
 
     }
 
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    private void BumpRpc(NetworkObjectReference bumpRef)
+    //[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void Bump(NetworkObjectReference bumpRef)
     {
         if (!bumpRef.TryGet(out NetworkObject bumpNetworkObject))
             return;
@@ -64,7 +64,7 @@ public class ForwardColliderController : NetworkBehaviour
         PainterController painter = bump.GetComponent<PainterController>();
         if (painter)
         {
-            painter.Team = _myCarController.MyTeam;
+            painter.ChangeTeamRpc(_myCarController.MyTeam);
         }
     }
 
