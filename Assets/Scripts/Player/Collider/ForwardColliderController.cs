@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Unity.Netcode;
 
-public class ForwardColliderController : MonoBehaviour
+public class ForwardColliderController : NetworkBehaviour
 {
     #region SerializeFields
 
@@ -30,42 +30,45 @@ public class ForwardColliderController : MonoBehaviour
         _myCarController = gameObject.GetComponentInParent<CarController>();
     }
 
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)] 
     private void OnTriggerEnter(Collider other)
     {
-        BumpRpc(other.gameObject);
+        BumpRpc(other.GetComponent<NetworkObject>());
 
     }
 
-
-//    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)] 
-  //[Rpc(SendTo.Server, Delivery = RpcDelivery.Reliable)]
-    private void BumpRpc(GameObject bump)
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void BumpRpc(NetworkObjectReference bumpRef)
     {
+        if (!bumpRef.TryGet(out NetworkObject bumpNetworkObject))
+            return;
+
+        GameObject bump = bumpNetworkObject.gameObject;
 
         bool isPushableTag = Array.Exists(_pushableTags, tag => tag == bump.tag);
 
         if (!isPushableTag) return;
-        
+
         _canPush = false;
-        
+
         Rigidbody targetRb = bump.GetComponent<Rigidbody>();
         if (targetRb == null) return;
-        Debug.LogError("BumpRpc");
 
         Vector3 pushDir = new Vector3(
             _myCarController.Rigidbody.linearVelocity.x,
             targetRb.linearVelocity.y + _jumpBumpForce,
             _myCarController.Rigidbody.linearVelocity.z
         );
-        
+
         targetRb.AddForce(pushDir, ForceMode.Impulse);
 
-        if (bump.GetComponent<PainterController>())
+        PainterController painter = bump.GetComponent<PainterController>();
+        if (painter)
         {
-            bump.GetComponent<PainterController>().Team = _myCarController.MyTeam;
+            painter.Team = _myCarController.MyTeam;
         }
     }
 
+
+    
 
 }

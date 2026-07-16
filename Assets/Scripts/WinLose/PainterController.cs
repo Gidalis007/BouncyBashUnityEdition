@@ -4,7 +4,7 @@ using UnityEngine;
 public class PainterController : NetworkBehaviour
 {
 
-    [SerializeField] private NetworkVariable<ETeam> _team = new NetworkVariable<ETeam>(ETeam.BLUE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private NetworkVariable<ETeam> _team = new NetworkVariable<ETeam>(ETeam.BLUE,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
     [Space]
     [Tooltip("Rayon du pinceau mètres")]

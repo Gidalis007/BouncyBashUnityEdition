@@ -66,8 +66,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16719aafc3b52692ea8f9788eb9d0a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
+  ShowTopMostFoldoutHeaderGroup: 1
   _bumpForce: 2
-  _jumpBumpForce: 7
+  _jumpBumpForce: 0
   _minPushForce: 50
   _pushableTags:
   - Player
@@ -217,6 +218,7 @@ GameObject:
   - component: {fileID: 1452314082203172640}
   - component: {fileID: 265221868910894722}
   - component: {fileID: 3723910282709618049}
+  - component: {fileID: 6887139866429689958}
   m_Layer: 6
   m_Name: CarPlayer
   m_TagString: Player
@@ -460,6 +462,23 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &6887139866429689958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3497411153570532641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkRigidbody
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkRigidbodyBaseExpanded: 0
+  UseRigidBodyForMotion: 1
+  AutoUpdateKinematicState: 1
+  AutoSetKinematicOnDespawn: 1
 --- !u!1 &6532575715084912138
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,8 +577,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16719aafc3b52692ea8f9788eb9d0a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
+  ShowTopMostFoldoutHeaderGroup: 1
   _bumpForce: 1
-  _jumpBumpForce: 5
+  _jumpBumpForce: 0
   _minPushForce: 5
   _pushableTags:
   - Brush
