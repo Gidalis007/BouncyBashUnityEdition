@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b5bab456-0625-4132-98c7-30717be6959b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/CarController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/CarController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/Collider/ForwardColliderController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/Collider/ForwardColliderController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/PainterController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WinLose/PainterController.cs" afterDir="false" />
     </list>
@@ -149,7 +147,7 @@
       <workItem from="1784142586776" duration="4090000" />
       <workItem from="1784207064173" duration="2630000" />
       <workItem from="1784214560846" duration="2834000" />
-      <workItem from="1784236905757" duration="1523000" />
+      <workItem from="1784236905757" duration="2001000" />
     </task>
     <servers />
   </component>

@@ -23,6 +23,11 @@ public class ForwardColliderController : NetworkBehaviour
     private CarController _myCarController;
 
     #endregion Attributes
+    
+    #region Properties
+    #endregion Properties
+    
+    #region Mono
 
     private void Awake()
     {
@@ -33,10 +38,11 @@ public class ForwardColliderController : NetworkBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Bump(other.GetComponent<NetworkObject>());
-
     }
 
-    //[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    #endregion Mono
+    
+    #region Methods
     private void Bump(NetworkObjectReference bumpRef)
     {
         if (!bumpRef.TryGet(out NetworkObject bumpNetworkObject))
@@ -67,7 +73,7 @@ public class ForwardColliderController : NetworkBehaviour
             painter.ChangeTeamRpc(_myCarController.MyTeam);
         }
     }
-
+    #endregion Methods
 
     
 

@@ -5,6 +5,8 @@ using UnityEngine;
 public class PainterController : NetworkBehaviour
 {
 
+    #region SerializedFields
+    
     [SerializeField] private NetworkVariable<ETeam> _team = new NetworkVariable<ETeam>(ETeam.BLUE,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
     [Space]
@@ -13,10 +15,17 @@ public class PainterController : NetworkBehaviour
     
     [Tooltip("Intervalle minimum (en secondes) entre deux peintures, pour éviter de surcharger le CPU.")]
     [SerializeField] private float paintInterval = 0.05f;
-
+    
+    #endregion SerializedFields
+    
+    #region Attributes
+    
     private Rigidbody _rb;
     private float _paintTimer;
+
+    #endregion Attributes
     
+    #region Properties
     public ETeam Team
     {
         get => _team.Value;
@@ -26,16 +35,12 @@ public class PainterController : NetworkBehaviour
             GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
         }
     }
-
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    public void ChangeTeamRpc(ETeam team)
-    {
-        _team.Value = team;
-        GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
-    }
-    
+   
     public Rigidbody Rigidbody => _rb;
+    
+    #endregion Properties
 
+    #region Mono
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -56,6 +61,10 @@ public class PainterController : NetworkBehaviour
     {
         TryPaint(other);
     }
+    
+    #endregion Mono
+    
+    #region Methods
 
     private void TryPaint(Collider other)
     {
@@ -74,12 +83,24 @@ public class PainterController : NetworkBehaviour
         if (collision.gameObject.CompareTag("Player") && collision.gameObject.TryGetComponent(out NetworkObject networkObject))
             ChangeOwnerRpc(networkObject.OwnerClientId);
     }
+    
+    #endregion Methods
 
+    #region Rpc
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void ChangeOwnerRpc(ulong ownerClientId)
     {
         NetworkObject test = GetComponent<NetworkObject>();
         GetComponent<NetworkObject>().ChangeOwnership(ownerClientId);
     }
+    
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public void ChangeTeamRpc(ETeam team)
+    {
+        _team.Value = team;
+        GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
+    }
+    #endregion Rpc
 
 }
