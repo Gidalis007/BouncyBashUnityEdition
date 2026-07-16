@@ -39,13 +39,13 @@ public class PlatformController : NetworkBehaviour
     
     private ETeam[] _pixelTeams;
     private Dictionary<ETeam, int> _teamPixelCount;
-    private ETeam _currentOwner = ETeam.NONE;
+    private NetworkVariable<ETeam>  _currentOwner = new NetworkVariable<ETeam>(ETeam.NONE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner) ;
     private bool _isCaptured = false;
 
 #endregion Attributes
 
 #region Properties
-    public ETeam CurrentOwner => _currentOwner;
+    public ETeam CurrentOwner => _currentOwner.Value;
     public bool IsCaptured => _isCaptured;
     
 #endregion Properties
@@ -98,7 +98,7 @@ public class PlatformController : NetworkBehaviour
     private void CheckTeamCapture(ETeam team)
     {
         float ratio = (float)_teamPixelCount[team] / _totalPixels;
-        if (ratio >= captureThreshold && _currentOwner != team)
+        if (ratio >= captureThreshold && _currentOwner.Value != team)
         {
             CapturePlatform(team);
         }
@@ -106,7 +106,7 @@ public class PlatformController : NetworkBehaviour
 
     private void CapturePlatform(ETeam team)
     {
-        _currentOwner = team;
+        _currentOwner.Value = team;
         _isCaptured = true;
 
         if (floodFillOnCapture)
@@ -153,7 +153,7 @@ public class PlatformController : NetworkBehaviour
     
     public void ResetPlatform()
     {
-        _currentOwner = ETeam.NONE;
+        _currentOwner.Value = ETeam.NONE;
         _isCaptured = false;
         InitTexture();
     }
