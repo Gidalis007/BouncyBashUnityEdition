@@ -48,9 +48,13 @@ public class CarController : NetworkBehaviour
     
     private Camera _camera;
     
-    private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     
     #endregion Attributes
+    
+#region Network Attribute & SerializedFields
+    [SerializeField] private NetworkVariable<float> _testSerialize =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    #endregion Network Attribute & SerializedFields
 
 #region Properties
 
@@ -135,6 +139,9 @@ public ETeam MyTeam
         if (!_playable || !IsOwner) return;
         Jump();
         Dash();
+        
+        if (Input.GetKeyDown(KeyCode.U))
+            DebugSwitchTeam();
     }
 
     #endregion Mono
@@ -262,5 +269,18 @@ public ETeam MyTeam
         _canBeBump = true;
     }
 #endregion Courtines
-    
+
+#region Debug
+
+private void DebugSwitchTeam()
+{
+    if (MyTeam == ETeam.BLUE)
+        MyTeam = ETeam.RED;
+    else if (MyTeam == ETeam.RED)
+        MyTeam = ETeam.BLUE;
+    else 
+        MyTeam = ETeam.RED;
+}
+
+#endregion Debug
 }

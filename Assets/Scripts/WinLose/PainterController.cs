@@ -26,15 +26,6 @@ public class PainterController : NetworkBehaviour
     #endregion Attributes
     
     #region Properties
-    public ETeam Team
-    {
-        get => _team.Value;
-        set
-        {
-            _team.Value = value;
-            GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
-        }
-    }
    
     public Rigidbody Rigidbody => _rb;
     
@@ -73,7 +64,7 @@ public class PainterController : NetworkBehaviour
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        platform.Paint(transform.position, Team, brushRadius);
+        platform.Paint(transform.position, _team.Value, brushRadius);
         _paintTimer = 0f;
     }
 
@@ -99,7 +90,13 @@ public class PainterController : NetworkBehaviour
     public void ChangeTeamRpc(ETeam team)
     {
         _team.Value = team;
-        GetComponent<Renderer>().material.color = _team.Value == ETeam.BLUE ? Color.blue : Color.red;
+        ChangeColorRpc(team == ETeam.BLUE ? Color.blue : Color.red);
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void ChangeColorRpc(Color color)
+    {
+        GetComponent<Renderer>().material.color = color;
     }
     #endregion Rpc
 

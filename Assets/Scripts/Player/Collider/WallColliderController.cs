@@ -3,28 +3,7 @@ using UnityEngine;
 
 public class WallColliderController : MonoBehaviour
 {
-    /*private CarController _myCarController;
-
-    private void Awake()
-    {
-        _myCarController = gameObject.GetComponentInParent<CarController>();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag != "ColliderDetector" || other.tag == "Untagged" || other.tag == "Brush")
-        {
-            
-            StopCoroutine("StopSpeed");
-            StartCoroutine(_myCarController.StopSpeed(0.7f));
-            
-            _myCarController.MoveForce = - _myCarController.MoveForce*0.5f;
-            //_myCarController.MoveForce = Vector3.ClampMagnitude(_myCarController.MoveForce, _myCarController.MaxSpeed*2);
-
-
-        }
-    }*/
-    
+    #region  SerializeFields
     [Header("Réglages du rebond")]
     [Tooltip("Vitesse minimale garantie après un rebond")]
     [SerializeField] private float _minBounceSpeed = 5f;
@@ -39,12 +18,17 @@ public class WallColliderController : MonoBehaviour
 
     [Header("Anti-collage au mur")]
     [Tooltip("Distance dont l'objet est repoussé hors du mur à chaque frame de contact (0 = désactivé)")]
-    public float _pushForce = 2f;
+    [SerializeField] private float _pushForce = 2f;
+    #endregion SerializeFields
     
+    #region Attributes
     private Rigidbody _rigidbody;
+    #endregion Attributes
     
+    #region Properties
+    #endregion Properties
 
-    
+    #region Mono
     
     void Awake()
     {
@@ -62,6 +46,9 @@ public class WallColliderController : MonoBehaviour
         Vector3 normal = collision.contacts[0].normal;
         _rigidbody.AddForce(normal * _pushForce, ForceMode.Force);
     }
+    #endregion Mono
+    
+    #region Methods
 
     private void Bounce(Collision collision)
     {
@@ -93,4 +80,6 @@ public class WallColliderController : MonoBehaviour
         }
         return false;
     }
+    
+    #endregion Methods
 }

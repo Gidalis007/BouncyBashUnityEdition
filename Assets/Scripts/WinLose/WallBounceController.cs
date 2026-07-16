@@ -9,8 +9,9 @@ using UnityEngine;
 /// une vitesse minimale après chaque rebond pour éviter qu'il ne "s'endorme" contre un mur.
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
-public class WallBounceControllerWallBounceController : MonoBehaviour
+public class WallBounceController : MonoBehaviour
 {
+    #region Serialized Fields
     [Header("Réglages du rebond")]
     [Tooltip("Vitesse minimale garantie après un rebond")]
     [SerializeField] private float _minBounceSpeed = 5f;
@@ -26,12 +27,13 @@ public class WallBounceControllerWallBounceController : MonoBehaviour
     [Header("Anti-collage au mur")]
     [Tooltip("Distance dont l'objet est repoussé hors du mur à chaque frame de contact (0 = désactivé)")]
     public float _pushForce = 2f;
+    #endregion
     
+    #region Attribute
     private Rigidbody _rigidbody;
+    #endregion Attribute
     
-
-    
-    
+    #region Mono
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -48,7 +50,10 @@ public class WallBounceControllerWallBounceController : MonoBehaviour
         Vector3 normal = collision.contacts[0].normal;
         _rigidbody.AddForce(normal * _pushForce, ForceMode.Force);
     }
+    
+    #endregion Mono
 
+    #region Methods
     private void Bounce(Collision collision)
     {
         if (!IsWall(collision.gameObject)) return;
@@ -79,5 +84,7 @@ public class WallBounceControllerWallBounceController : MonoBehaviour
         }
         return false;
     }
+    
+    #endregion
 
 }

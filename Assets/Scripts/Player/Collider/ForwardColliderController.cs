@@ -74,7 +74,4 @@ public class ForwardColliderController : NetworkBehaviour
         }
     }
     #endregion Methods
-
-    
-
 }

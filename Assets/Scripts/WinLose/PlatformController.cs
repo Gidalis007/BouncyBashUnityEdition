@@ -3,12 +3,6 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// Plateforme "peignable". Un objet équipé de PainterController peut la peindre
-/// à l'endroit où il passe. Quand une team atteint le seuil de capture (60% par défaut),
-/// la plateforme est entièrement remplie par la couleur de cette team et peut ensuite
-/// être re-capturée par l'équipe adverse en re-peignant par-dessus.
-/// </summary>
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Collider))]
 public class PlatformController : NetworkBehaviour
@@ -48,29 +42,27 @@ public class PlatformController : NetworkBehaviour
     private ETeam _currentOwner = ETeam.NONE;
     private bool _isCaptured = false;
 
-    #region Properties
+#endregion Attributes
+
+#region Properties
     public ETeam CurrentOwner => _currentOwner;
     public bool IsCaptured => _isCaptured;
     
-    #endregion Properties
-    
-#endregion Attributes
+#endregion Properties
 
+#region Mono
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
         InitTexture();
     }
+#endregion Mono
 
+#region Methods
+    #region private methods
     private void InitTexture()
     {
-        //textureResolution = Mathf.Max(8, textureResolution);
-
         _paintTexture = new Texture2D(textureResolution, textureResolution, TextureFormat.RGBA32, false);
-        /*{
-            wrapMode = TextureWrapMode.Clamp,
-            filterMode = FilterMode.Bilinear
-        };*/
 
         _totalPixels = textureResolution * textureResolution;
         _pixelTeams = new ETeam[_totalPixels];
@@ -95,48 +87,7 @@ public class PlatformController : NetworkBehaviour
         _renderer.material.mainTexture = _paintTexture;
     }
     
-    public void Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
-    {
-        Vector2 uv = WorldToUV(worldPosition);
-        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return; // en dehors de la plateforme
-
-        int centerX = Mathf.RoundToInt(uv.x * (textureResolution - 1));
-        int centerY = Mathf.RoundToInt(uv.y * (textureResolution - 1));
-
-        float platformSize = GetPlatformWorldSize();
-        int pixelRadius = Mathf.Max(1, Mathf.RoundToInt((brushRadiusWorld / platformSize) * textureResolution));
-
-        bool changed = false;
-
-        for (int y = -pixelRadius; y <= pixelRadius; y++)
-        {
-            for (int x = -pixelRadius; x <= pixelRadius; x++)
-            {
-                if (x * x + y * y > pixelRadius * pixelRadius) continue; // forme circulaire
-
-                int px = centerX + x;
-                int py = centerY + y;
-                if (px < 0 || px >= textureResolution || py < 0 || py >= textureResolution) continue;
-
-                int index = py * textureResolution + px;
-                ETeam previous = _pixelTeams[index];
-                if (previous == team) continue;
-
-                _teamPixelCount[previous]--;
-                _teamPixelCount[team]++;
-                _pixelTeams[index] = team;
-
-                _paintTexture.SetPixel(px, py, GetColorForTeam(team));
-                changed = true;
-            }
-        }
-
-        if (changed)
-        {
-            _paintTexture.Apply(false);
-            CheckCapture();
-        }
-    }
+    
 
     private void CheckCapture()
     {
@@ -182,30 +133,6 @@ public class PlatformController : NetworkBehaviour
         _teamPixelCount[ETeam.BLUE] = team == ETeam.BLUE ? _totalPixels : 0;
         _teamPixelCount[ETeam.RED] = team == ETeam.RED ? _totalPixels : 0;
     }
-    
-    public void ResetPlatform()
-    {
-        _currentOwner = ETeam.NONE;
-        _isCaptured = false;
-        InitTexture();
-    }
-    
-    public float GetTeamPercentage(ETeam team)
-    {
-        if (_teamPixelCount == null) return 0f;
-        return (float)_teamPixelCount[team] / _totalPixels;
-    }
-
-    private Color GetColorForTeam(ETeam team)
-    {
-        switch (team)
-        {
-            case ETeam.BLUE: return colorBlue;
-            case ETeam.RED: return colorRed;
-            default: return colorNone;
-        }
-    }
-
     private Vector2 WorldToUV(Vector3 worldPosition)
     {
         // working only to not turn object
@@ -220,4 +147,77 @@ public class PlatformController : NetworkBehaviour
         Bounds bounds = _renderer.bounds;
         return Mathf.Max(bounds.size.x, bounds.size.z);
     }
+    #endregion private methods
+
+    #region public methods
+    
+    public void ResetPlatform()
+    {
+        _currentOwner = ETeam.NONE;
+        _isCaptured = false;
+        InitTexture();
+    }
+    
+    public float GetTeamPercentage(ETeam team)
+    {
+        if (_teamPixelCount == null) return 0f;
+        return (float)_teamPixelCount[team] / _totalPixels;
+    }
+
+    public Color GetColorForTeam(ETeam team)
+    {
+        switch (team)
+        {
+            case ETeam.BLUE: return colorBlue;
+            case ETeam.RED: return colorRed;
+            default: return colorNone;
+        }
+    }
+    
+    public void Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
+    {
+        Vector2 uv = WorldToUV(worldPosition);
+        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return; // en dehors de la plateforme
+
+        int centerX = Mathf.RoundToInt(uv.x * (textureResolution - 1));
+        int centerY = Mathf.RoundToInt(uv.y * (textureResolution - 1));
+
+        float platformSize = GetPlatformWorldSize();
+        int pixelRadius = Mathf.Max(1, Mathf.RoundToInt((brushRadiusWorld / platformSize) * textureResolution));
+
+        bool changed = false;
+
+        for (int y = -pixelRadius; y <= pixelRadius; y++)
+        {
+            for (int x = -pixelRadius; x <= pixelRadius; x++)
+            {
+                if (x * x + y * y > pixelRadius * pixelRadius) continue; // forme circulaire
+
+                int px = centerX + x;
+                int py = centerY + y;
+                if (px < 0 || px >= textureResolution || py < 0 || py >= textureResolution) continue;
+
+                int index = py * textureResolution + px;
+                ETeam previous = _pixelTeams[index];
+                if (previous == team) continue;
+
+                _teamPixelCount[previous]--;
+                _teamPixelCount[team]++;
+                _pixelTeams[index] = team;
+
+                _paintTexture.SetPixel(px, py, GetColorForTeam(team));
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            _paintTexture.Apply(false);
+            CheckCapture();
+        }
+    }
+
+    #endregion public methods
+
+#endregion methods
 }
