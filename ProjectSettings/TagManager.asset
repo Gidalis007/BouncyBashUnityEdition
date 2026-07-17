@@ -8,6 +8,7 @@ TagManager:
   - Brush
   - Wall
   - Death
+  - Timer
   layers:
   - Default
   - TransparentFX
