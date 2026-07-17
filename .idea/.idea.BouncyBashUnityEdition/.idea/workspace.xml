@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b5bab456-0625-4132-98c7-30717be6959b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WinLose/PlatformController.cs" afterDir="false" />
-    </list>
+    <list default="true" id="b5bab456-0625-4132-98c7-30717be6959b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -146,7 +144,7 @@
       <workItem from="1784207064173" duration="2630000" />
       <workItem from="1784214560846" duration="2834000" />
       <workItem from="1784236905757" duration="2001000" />
-      <workItem from="1784240983484" duration="4246000" />
+      <workItem from="1784240983484" duration="4586000" />
     </task>
     <servers />
   </component>
