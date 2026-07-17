@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 253315805}
   m_Layer: 0
-  m_Name: ld
+  m_Name: LevelDesign
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -342,112 +342,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &989434794
+--- !u!1 &949331832 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 3928240642246200571, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+  m_PrefabInstance: {fileID: 4585827576286888093}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 989434796}
-  - component: {fileID: 989434795}
-  - component: {fileID: 989434797}
-  m_Layer: 0
-  m_Name: NetworkManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &989434795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 989434794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 593a2fe42fa9d37498c96f9a383b6521, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkManager
-  NetworkManagerExpanded: 0
-  NetworkConfig:
-    ProtocolVersion: 0
-    NetworkTransport: {fileID: 989434797}
-    PlayerPrefab: {fileID: 3497411153570532641, guid: 8e5a52f472816aaa1a7acf2c779184b6, type: 3}
-    Prefabs:
-      NetworkPrefabsLists:
-      - {fileID: 11400000, guid: 2dcd587c1a14033c99c96f3c37792c2d, type: 2}
-    TickRate: 30
-    ClientConnectionBufferTimeout: 10
-    ConnectionApproval: 0
-    ConnectionData: 
-    EnableTimeResync: 0
-    TimeResyncInterval: 30
-    EnsureNetworkVariableLengthSafety: 0
-    EnableSceneManagement: 1
-    ForceSamePrefabs: 1
-    RecycleNetworkIds: 1
-    NetworkIdRecycleDelay: 120
-    RpcHashSize: 0
-    LoadSceneTimeOut: 120
-    SpawnTimeout: 10
-    EnableNetworkLogs: 1
-    NetworkTopology: 0
-    UseCMBService: 0
-    AutoSpawnPlayerPrefabClientSide: 1
-    NetworkProfilingMetrics: 1
-    OldPrefabList: []
-  RunInBackground: 1
-  LogLevel: 1
---- !u!4 &989434796
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 989434794}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &989434797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 989434794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Transports.UTP.UnityTransport
-  m_ProtocolType: 0
-  m_UseWebSockets: 0
-  m_UseEncryption: 0
-  m_MaxPacketQueueSize: 128
-  m_MaxPayloadSize: 6144
-  m_HeartbeatTimeoutMS: 500
-  m_ConnectTimeoutMS: 1000
-  m_MaxConnectAttempts: 60
-  m_DisconnectTimeoutMS: 30000
-  ConnectionData:
-    Address: 127.0.0.1
-    Port: 7777
-    WebSocketPath: /
-    ServerListenAddress: 127.0.0.1
-    ClientBindPort: 0
-  DebugSimulator:
-    PacketDelayMS: 0
-    PacketJitterMS: 0
-    PacketDropRate: 0
 --- !u!1 &1173600958 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
@@ -1151,67 +1050,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffa18a797399db7009087483d337ecc3, type: 3}
---- !u!1001 &1964602097
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.02253
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1.84536
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3074085516207500509, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061378081700855015, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_Name
-      value: NetworkStartUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061378081700855015, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 589da12a8dfd1dee39f6d06eb01fd5b9, type: 3}
 --- !u!1 &2005522554
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,13 +1246,42 @@ PrefabInstance:
     - {fileID: 7389230323923201086, guid: ffa18a797399db7009087483d337ecc3, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3928240642246200571, guid: ffa18a797399db7009087483d337ecc3, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 4585827576286888099}
   m_SourcePrefab: {fileID: 100100000, guid: ffa18a797399db7009087483d337ecc3, type: 3}
 --- !u!4 &4585827576286888094 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3991265703961144539, guid: ffa18a797399db7009087483d337ecc3, type: 3}
   m_PrefabInstance: {fileID: 4585827576286888093}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4585827576286888099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 949331832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3697016274
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  <InScenePlaced>k__BackingField: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1001 &6866379378036529672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1517,14 +1384,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 1173600982}
+    - targetCorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1173600966}
     - targetCorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1173600973}
-    - targetCorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1173600982}
     - targetCorrespondingSourceObject: {fileID: 1718909092307425222, guid: 4cc27c0f3d2f57f6bb6aacdc05ce00b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1173600989}
@@ -1540,6 +1407,4 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 253315805}
   - {fileID: 6866379378036529672}
-  - {fileID: 989434796}
   - {fileID: 2005522557}
-  - {fileID: 1964602097}

@@ -174,7 +174,14 @@ public class PlatformController : NetworkBehaviour
         }
     }
     
+
     public void Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
+    {
+        PaintRpc(worldPosition, team, brushRadiusWorld);
+    }
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void PaintRpc(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
     {
         Vector2 uv = WorldToUV(worldPosition);
         if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return; // en dehors de la plateforme
