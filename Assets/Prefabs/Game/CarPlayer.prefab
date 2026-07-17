@@ -72,6 +72,8 @@ MonoBehaviour:
   _minPushForce: 50
   _pushableTags:
   - Player
+  _minJumpPush: 2
+  _maxJumpPush: 15
   _maxPushSecond: 0.1
 --- !u!1 &2717504283789482901
 GameObject:
@@ -256,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1723490082
+  GlobalObjectIdHash: 1088799120
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -601,11 +603,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
   ShowTopMostFoldoutHeaderGroup: 1
   _bumpForce: 1
-  _jumpBumpForce: 5
+  _jumpBumpForce: 0.5
   _minPushForce: 5
   _pushableTags:
   - Brush
-  _maxPushSecond: 0.1
+  _minJumpPush: 1
+  _maxJumpPush: 10
+  _maxPushSecond: 0.5
 --- !u!1 &7373967438342820593
 GameObject:
   m_ObjectHideFlags: 0
