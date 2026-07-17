@@ -503,6 +503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea867fa4373c7342fa59c080cb5ae3e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRespawn
+  ShowTopMostFoldoutHeaderGroup: 1
   _canvasPrefab: {fileID: 8933943839315055227, guid: a6226478c51871e698b2010b111a341f, type: 3}
 --- !u!1 &6532575715084912138
 GameObject:
@@ -606,9 +607,9 @@ MonoBehaviour:
   _bumpForce: 1
   _minPushForce: 5
   _maxPushSecond: 0.5
-  _jumpBumpForce: 0.5
-  _minJumpPush: 1
-  _maxJumpPush: 10
+  _jumpBumpForce: 0.4
+  _minJumpPush: 2
+  _maxJumpPush: 8
   _pushableTags:
   - Brush
 --- !u!1 &7373967438342820593

@@ -31,12 +31,13 @@ public class PlayerRespawn : NetworkBehaviour
         TimerRespawn();
     }
 
+
     public void Respawn(float time)
     {
         if (!IsOwner) return;
-        _timer = time;
+
         _canvas = Instantiate(_canvasPrefab, Vector3.zero, Quaternion.identity, transform);
-        
+        GetComponent<MeshRenderer>().enabled = false;
         
         for (int i = 0; i < _canvas.GetComponentsInChildren<TextMeshProUGUI>().Length; i++)
         {
@@ -44,7 +45,9 @@ public class PlayerRespawn : NetworkBehaviour
                 _timerText = _canvas.GetComponentsInChildren<TextMeshProUGUI>()[i];
         }
         
-        TimerRespawn();
+        EnablePlayerRpc(false);
+        
+        _timer = time;
     }
     
 
@@ -64,10 +67,23 @@ public class PlayerRespawn : NetworkBehaviour
             _rb.rotation = _ogRotation;
             
             Destroy(_canvas);
+            
+            EnablePlayerRpc(true);
+            
             return;
         }
 
         _timerText.text = _timer.ToString("0.0");
         _timer -= Time.deltaTime;
     }
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void EnablePlayerRpc(bool enable)
+    {
+        GetComponent<Collider>().enabled = enable;
+        GetComponent<Rigidbody>().useGravity = enable;
+        GetComponent<MeshRenderer>().enabled = enable;
+        GetComponent<CarController>().enabled = enable;
+    }
+
+
 }

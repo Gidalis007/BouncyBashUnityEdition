@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b5bab456-0625-4132-98c7-30717be6959b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BouncyBashUnityEdition/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/CarPlayer.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/CarPlayer.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerRespawn.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerRespawn.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WinLose/DeathZone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WinLose/DeathZone.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +152,7 @@
       <workItem from="1784240983484" duration="4586000" />
       <workItem from="1784279638579" duration="905000" />
       <workItem from="1784282505623" duration="5126000" />
-      <workItem from="1784291699809" duration="6226000" />
+      <workItem from="1784291699809" duration="9186000" />
     </task>
     <servers />
   </component>
