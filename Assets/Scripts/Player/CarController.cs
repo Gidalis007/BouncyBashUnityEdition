@@ -4,6 +4,9 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))]
+
 public class CarController : NetworkBehaviour
 {
 #region Serialized Fields

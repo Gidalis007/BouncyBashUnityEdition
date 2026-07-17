@@ -8,58 +8,73 @@ using UnityEngine.Events;
 public class PlatformController : NetworkBehaviour
 {
     [System.Serializable]
-    public class TeamEvent : UnityEvent<ETeam> { }
+    public class TeamEvent : UnityEvent<ETeam>
+    {
+    }
 
-#region Serialized Fields
+    #region Serialized Fields
+
     [Header("Résolution de la texture de peinture")]
     [Tooltip("Plus la résolution est haute, plus la peinture est précise (mais plus c'est lourd).")]
-    [SerializeField] private int textureResolution = 256;
+    [SerializeField]
+    private int textureResolution = 256;
 
-    [Header("Couleurs des teams")]
-    [SerializeField] private Color colorNone = Color.white;
+    [Header("Couleurs des teams")] [SerializeField]
+    private Color colorNone = Color.white;
+
     [SerializeField] private Color colorBlue = Color.blue;
     [SerializeField] private Color colorRed = Color.red;
 
     [Header("Capture")]
     [Range(0f, 1f)]
     [Tooltip("Pourcentage de la plateforme nécessaire pour capturer (0.6 = 60%).")]
-    [SerializeField] private float captureThreshold = 0.6f;
-    [Tooltip("Si vrai, la plateforme est remplie à 100% par la team dès que le seuil est atteint.")]
-    [SerializeField] private bool floodFillOnCapture = true;
+    [SerializeField]
+    private float captureThreshold = 0.6f;
 
-    [Header("Events")]
-    public TeamEvent OnPlatformCaptured;
-    
-#endregion Serialized Fields
-    
-#region Attributes
+    [Tooltip("Si vrai, la plateforme est remplie à 100% par la team dès que le seuil est atteint.")] [SerializeField]
+    private bool floodFillOnCapture = true;
+
+    [Header("Events")] public TeamEvent OnPlatformCaptured;
+
+    #endregion Serialized Fields
+
+    #region Attributes
+
     private Texture2D _paintTexture;
     private int _totalPixels;
     private Renderer _renderer;
-    
+
     private ETeam[] _pixelTeams;
     private Dictionary<ETeam, int> _teamPixelCount;
-    private NetworkVariable<ETeam>  _currentOwner = new NetworkVariable<ETeam>(ETeam.NONE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner) ;
+
+    private NetworkVariable<ETeam> _currentOwner = new NetworkVariable<ETeam>(ETeam.NONE,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     private bool _isCaptured = false;
 
-#endregion Attributes
+    #endregion Attributes
 
-#region Properties
+    #region Properties
+
     public ETeam CurrentOwner => _currentOwner.Value;
     public bool IsCaptured => _isCaptured;
-    
-#endregion Properties
 
-#region Mono
+    #endregion Properties
+
+    #region Mono
+
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
         InitTexture();
     }
-#endregion Mono
 
-#region Methods
+    #endregion Mono
+
+    #region Methods
+
     #region private methods
+
     private void InitTexture()
     {
         _paintTexture = new Texture2D(textureResolution, textureResolution, TextureFormat.RGBA32, false);
@@ -83,11 +98,11 @@ public class PlatformController : NetworkBehaviour
 
         _paintTexture.SetPixels32(initColors);
         _paintTexture.Apply();
-        
+
         _renderer.material.mainTexture = _paintTexture;
     }
-    
-    
+
+
 
     private void CheckCapture()
     {
@@ -100,39 +115,10 @@ public class PlatformController : NetworkBehaviour
         float ratio = (float)_teamPixelCount[team] / _totalPixels;
         if (ratio >= captureThreshold && _currentOwner.Value != team)
         {
-            CapturePlatform(team);
+            CapturePlatformRpc(team);
         }
     }
 
-    private void CapturePlatform(ETeam team)
-    {
-        _currentOwner.Value = team;
-        _isCaptured = true;
-
-        if (floodFillOnCapture)
-        {
-            FillAllWith(team);
-        }
-
-        OnPlatformCaptured?.Invoke(team);
-    }
-
-    private void FillAllWith(ETeam team)
-    {
-        Color color = GetColorForTeam(team);
-        Color32[] colors = new Color32[_totalPixels];
-        for (int i = 0; i < _totalPixels; i++)
-        {
-            _pixelTeams[i] = team;
-            colors[i] = color;
-        }
-        _paintTexture.SetPixels32(colors);
-        _paintTexture.Apply(false);
-
-        _teamPixelCount[ETeam.NONE] = 0;
-        _teamPixelCount[ETeam.BLUE] = team == ETeam.BLUE ? _totalPixels : 0;
-        _teamPixelCount[ETeam.RED] = team == ETeam.RED ? _totalPixels : 0;
-    }
     private Vector2 WorldToUV(Vector3 worldPosition)
     {
         // working only to not turn object
@@ -147,17 +133,18 @@ public class PlatformController : NetworkBehaviour
         Bounds bounds = _renderer.bounds;
         return Mathf.Max(bounds.size.x, bounds.size.z);
     }
+
     #endregion private methods
 
     #region public methods
-    
+
     public void ResetPlatform()
     {
         _currentOwner.Value = ETeam.NONE;
         _isCaptured = false;
         InitTexture();
     }
-    
+
     public float GetTeamPercentage(ETeam team)
     {
         if (_teamPixelCount == null) return 0f;
@@ -173,15 +160,9 @@ public class PlatformController : NetworkBehaviour
             default: return colorNone;
         }
     }
-    
+
 
     public void Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
-    {
-        PaintRpc(worldPosition, team, brushRadiusWorld);
-    }
-
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    private void PaintRpc(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
     {
         Vector2 uv = WorldToUV(worldPosition);
         if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return; // en dehors de la plateforme
@@ -226,5 +207,43 @@ public class PlatformController : NetworkBehaviour
 
     #endregion public methods
 
-#endregion methods
+    #region Rpc
+
+    [Rpc(SendTo.Authority, InvokePermission = RpcInvokePermission.Everyone)]
+    private void CapturePlatformRpc(ETeam team)
+    {
+        _currentOwner.Value = team;
+        _isCaptured = true;
+
+        if (floodFillOnCapture)
+        {
+            FillAllWithRpc(team);
+        }
+
+        OnPlatformCaptured?.Invoke(team);
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void FillAllWithRpc(ETeam team)
+    {
+        Color color = GetColorForTeam(team);
+        Color32[] colors = new Color32[_totalPixels];
+        for (int i = 0; i < _totalPixels; i++)
+        {
+            _pixelTeams[i] = team;
+            colors[i] = color;
+        }
+
+        _paintTexture.SetPixels32(colors);
+        _paintTexture.Apply(false);
+
+        _teamPixelCount[ETeam.NONE] = 0;
+        _teamPixelCount[ETeam.BLUE] = team == ETeam.BLUE ? _totalPixels : 0;
+        _teamPixelCount[ETeam.RED] = team == ETeam.RED ? _totalPixels : 0;
+    }
+
+    #endregion Rpc
+
+    #endregion methods
+
 }

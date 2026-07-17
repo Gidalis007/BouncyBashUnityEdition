@@ -18,14 +18,12 @@ public class NetworkStartUI : MonoBehaviour
       //NetworkManager.Singleton.SetServer
       NetworkManager.Singleton.StartHost();
       transform.gameObject.SetActive(false);
-      SceneManager.LoadScene(_sceneName);
    }
 
    public void Client()
    {
       NetworkManager.Singleton.StartClient();
       transform.gameObject.SetActive(false);
-      SceneManager.LoadScene(_sceneName);
    }
    
    #endregion Methodes

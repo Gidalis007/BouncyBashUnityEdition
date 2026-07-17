@@ -89,7 +89,6 @@ public class PainterController : NetworkBehaviour
     public void ChangeTeamRpc(ETeam team)
     {
         _team.Value = team;
-        Debug.LogError(team.ToString());
         ChangeColorRpc(team == ETeam.BLUE ? Color.blue :  team == ETeam.RED ? Color.red : Color.black);
     }
 
