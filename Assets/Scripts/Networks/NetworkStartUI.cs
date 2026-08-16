@@ -14,8 +14,6 @@ public class NetworkStartUI : MonoBehaviour
    
    public void Host()
    {
-      
-      //NetworkManager.Singleton.SetServer
       NetworkManager.Singleton.StartHost();
       transform.gameObject.SetActive(false);
    }

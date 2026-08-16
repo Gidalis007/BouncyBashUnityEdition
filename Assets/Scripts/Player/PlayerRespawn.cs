@@ -9,6 +9,7 @@ using UnityEngine;
 public class PlayerRespawn : NetworkBehaviour
 {
     [SerializeField] private GameObject _canvasPrefab;
+    [SerializeField] private GameObject _renderer;
     private GameObject _canvas;
     private TextMeshProUGUI _timerText;
     
@@ -37,7 +38,7 @@ public class PlayerRespawn : NetworkBehaviour
         if (!IsOwner) return;
 
         _canvas = Instantiate(_canvasPrefab, Vector3.zero, Quaternion.identity, transform);
-        GetComponent<MeshRenderer>().enabled = false;
+        _renderer.SetActive(false);
         
         for (int i = 0; i < _canvas.GetComponentsInChildren<TextMeshProUGUI>().Length; i++)
         {
@@ -81,7 +82,7 @@ public class PlayerRespawn : NetworkBehaviour
     {
         GetComponent<Collider>().enabled = enable;
         GetComponent<Rigidbody>().useGravity = enable;
-        GetComponent<MeshRenderer>().enabled = enable;
+        _renderer.SetActive(enable);
         GetComponent<CarController>().enabled = enable;
     }
 
