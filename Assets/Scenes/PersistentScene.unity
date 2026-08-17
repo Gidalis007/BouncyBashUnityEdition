@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameLoader
   _shouldLoadScene: 1
-  _sceneName: SampleScene
+  _sceneName: MainMenuScene
 --- !u!4 &449561949
 Transform:
   m_ObjectHideFlags: 0
