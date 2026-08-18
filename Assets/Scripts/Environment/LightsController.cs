@@ -1,6 +1,10 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
 
 public class LightsController : MonoBehaviour
 {
@@ -39,6 +43,7 @@ public class LightsController : MonoBehaviour
 
     private void Awake()
     {
+        Lobby test = new Lobby();
         {
             if (_instance == null)
                 _instance = this;
@@ -76,6 +81,7 @@ public class LightsController : MonoBehaviour
         for (int i = 0; i < _pulsingLights.Length; i++)
         {
             _pulsingLights[i].intensity = Random.Range(_minIntensity, _maxIntensity);
+
             _pulsingLights[i].color = _colors[Random.Range(0, _colors.Length)];
         }
     }
