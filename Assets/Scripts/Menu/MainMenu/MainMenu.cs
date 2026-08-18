@@ -1,26 +1,23 @@
+using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
     #region SerializeField
-
-    [SerializeField] private Light _focusExitLight;
-    [SerializeField] private Light _focusPlayLight;
-    [SerializeField] private Light _focusCommandLight;
-    [SerializeField] private Light _focusCreditsLight;
+    
+    [SerializeField] private CinemachineCamera _mainCamera;
+    [SerializeField] private GameObject _mainMenu;
     
     #endregion SerializeField
     
     #region Attributes
-    private Light[] _lights;
+
     #endregion Attributes
     
     #region Mono
-
-    private void Awake()
-    {
-        _lights = FindObjectsOfType<Light>();
-    }
+    
     
     #endregion Mono
     
@@ -37,41 +34,29 @@ public class MainMenu : MonoBehaviour
     
     #region Public
 
-    public void OverExitDoor()
+    public void QuitGame()
     {
-        
+        Application.Quit();
+    }
+    
+    public void ReturnBack(GameObject menu)
+    {
+        _mainCamera.Prioritize();
+        menu.SetActive(false);
+        _mainMenu.SetActive(true);
     }
 
-    public void OverPlayTable()
+    public void Host()
     {
-        
+        NetworkManager.Singleton.StartHost();
+        transform.gameObject.SetActive(false);
+        SceneManager.LoadScene("SampleScene");
     }
 
-    public void OverCommandDoor()
+    public void Client()
     {
-        
-    }
-
-    public void OverCreditScreen()
-    {
-        
-    }
-        
-        
-    public void TurnOffLights()
-    {
-        foreach (Light l in _lights)
-        {
-            l.intensity = 0;
-        }
-    }
-
-    public void TurnOnLights()
-    {
-        foreach (Light l in _lights)
-        {
-            l.intensity = 1;
-        }
+        NetworkManager.Singleton.StartClient();
+        transform.gameObject.SetActive(false);
     }
     #endregion Public
 
