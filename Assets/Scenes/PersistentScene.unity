@@ -221,6 +221,7 @@ MonoBehaviour:
     NetworkTopology: 0
     UseCMBService: 0
     AutoSpawnPlayerPrefabClientSide: 1
+    NetworkMessageMetrics: 1
     NetworkProfilingMetrics: 1
     OldPrefabList: []
   RunInBackground: 1
@@ -366,6 +367,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 989434796}
-  - {fileID: 1335807486}
   - {fileID: 449561949}
   - {fileID: 1841091701}
+  - {fileID: 1335807486}
