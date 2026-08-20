@@ -12,14 +12,14 @@ public class ButtonMenu : MonoBehaviour
     [SerializeField] private GameObject _menu;
     private void OnMouseEnter()
     {
-        Debug.Log("mouseenter");
+        //Debug.Log("mouseenter");
         _spotLight.SetActive(true); 
 
     }
 
     private void OnMouseExit()
     {
-        Debug.Log("mouseexit");
+     //   Debug.Log("mouseexit");
         _spotLight.SetActive(false);
 
     }

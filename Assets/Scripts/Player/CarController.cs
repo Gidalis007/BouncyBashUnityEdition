@@ -3,6 +3,10 @@ using System.Collections;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Collider))]
@@ -113,8 +117,13 @@ public ETeam MyTeam
         {
             _camera.enabled = false;
         }
+        
+        Debug.Log("OnNetworkSpawn");
+        
+        GameManager.Instance.PlayersController.Add(new NetworkObjectReference(this.NetworkObject));
+        
+        base.OnNetworkSpawn();
     }
-
 
     private void FixedUpdate()
     {

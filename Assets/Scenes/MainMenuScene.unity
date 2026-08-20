@@ -560,7 +560,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 72.2
+  field of view: 63
   orthographic: 0
   orthographic size: 10
   m_Depth: 1
@@ -586,8 +586,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174329645}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.032163497, y: -0.6937315, z: 0.031039532, w: 0.71884537}
-  m_LocalPosition: {x: 26.74779, y: 0.15635014, z: 9.15548}
+  m_LocalRotation: {x: -0.00006498803, y: -0.99811554, z: 0.061353326, w: -0.0010717474}
+  m_LocalPosition: {x: -12.17221, y: -0.6236496, z: -6.7295704}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1832,6 +1832,70 @@ PrefabInstance:
     - target: {fileID: 5760297647165458659, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 749065355}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 749065355}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeSceneRpc
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameSceneManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameSceneManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: SampleScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: SampleScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340460519687816760, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7266753561738520340, guid: 8cc0b6ba7549948aba4ecedc6ce4302e, type: 3}
       propertyPath: m_Value
@@ -3486,10 +3550,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 749065352}
-  - component: {fileID: 749065353}
   - component: {fileID: 749065354}
+  - component: {fileID: 749065355}
   m_Layer: 0
-  m_Name: Test
+  m_Name: SceneManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3510,19 +3574,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &749065353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749065351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc41f6127f431e5e6a7936fe03298b61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TEST
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &749065354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3549,6 +3600,19 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &749065355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749065351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc41f6127f431e5e6a7936fe03298b61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSceneManager
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &771108683
 GameObject:
   m_ObjectHideFlags: 0
@@ -4960,8 +5024,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 749065353}
-        m_TargetAssemblyTypeName: TEST, Assembly-CSharp
+      - m_Target: {fileID: 749065355}
+        m_TargetAssemblyTypeName: GameSceneManager, Assembly-CSharp
         m_MethodName: ChangeScene
         m_Mode: 5
         m_Arguments:

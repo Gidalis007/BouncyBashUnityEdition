@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -9,6 +10,7 @@ public class GameManager : NetworkBehaviour
     #region Attributes
     private static GameManager _instance = null;
     private Dictionary<ETeam, int> _teamsPoints = new Dictionary<ETeam, int>();
+    private NetworkList<NetworkObjectReference> _playersController = new NetworkList<NetworkObjectReference>(null, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     #endregion Attributes
 
     #region Events
@@ -24,6 +26,12 @@ public class GameManager : NetworkBehaviour
         set => _teamsPoints = value;
     }
 
+    public NetworkList<NetworkObjectReference> PlayersController
+    {
+        get => _playersController;
+        set => _playersController = value;
+    }
+
     #endregion Properties
 
     #region Mono
@@ -33,6 +41,7 @@ public class GameManager : NetworkBehaviour
             _instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    
 
     #endregion Mono
 
