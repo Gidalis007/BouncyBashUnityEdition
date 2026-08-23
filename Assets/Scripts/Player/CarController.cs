@@ -4,9 +4,6 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine;
-using Unity.Netcode;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Collider))]
@@ -45,13 +42,19 @@ public class CarController : NetworkBehaviour
     private Collider _playerCollider;
     private bool _stopMaxSpeed;
     
+    // Inputs reçus (sur le serveur) ou capturés localement (sur le owner) chaque FixedUpdate
     private float _verticalInput;
+    private float _horizontalInput;
     
-    private float _airPenaltyMemory;
+    // N'est mis à jour et utilisé que côté serveur, qui est seul à exécuter la physique
+    private float _airPenaltyMemory = 1f;
     
     private bool _canBeBump = true;
     private float _delayBeBump = .3f;
     private bool _canSpeed = true;
+
+    // Référence à la coroutine de boost du Dash, pour pouvoir vraiment l'arrêter (cf. bug fix)
+    private Coroutine _stopMaxSpeedRoutine;
     
     private Camera _camera;
     
@@ -62,6 +65,21 @@ public class CarController : NetworkBehaviour
     [SerializeField] private NetworkVariable<float> _testSerialize =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     #endregion Network Attribute & SerializedFields
+
+#region Types
+
+    // Direction du dash envoyée par le client : le serveur reconvertit lui-même
+    // cette intention en vecteur monde à partir de SON propre transform (autorité).
+    private enum EDashDirection
+    {
+        None,
+        Forward,
+        Backward,
+        Left,
+        Right
+    }
+
+#endregion Types
 
 #region Properties
 
@@ -117,6 +135,11 @@ public ETeam MyTeam
         {
             _camera.enabled = false;
         }
+
+        // Filet de sécurité : seul le serveur simule la physique (Rigidbody non-kinematic).
+        // NetworkRigidbody gère normalement déjà ce switch automatiquement selon l'autorité,
+        // cette ligne garantit juste le bon état dès le premier frame.
+        Rigidbody.isKinematic = !IsServer;
         
         Debug.Log("OnNetworkSpawn");
         
@@ -127,19 +150,38 @@ public ETeam MyTeam
 
     private void FixedUpdate()
     {
-        if (!_playable || !IsOwner) return;
+        if (!_playable) return;
 
+        // Le owner capture ses inputs de déplacement à chaque tick physique et les envoie au serveur.
+        // Si le owner EST le serveur (host), on évite l'aller-retour réseau inutile.
+        if (IsOwner)
+        {
+            float vertical = Input.GetAxis("Vertical");
+            float horizontal = Input.GetAxisRaw("Horizontal");
 
-
-            if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+            if (IsServer)
             {
-                Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
-                _airPenaltyMemory = _airPenality;
+                _verticalInput = vertical;
+                _horizontalInput = horizontal;
             }
             else
             {
-                _airPenaltyMemory = 1;
+                SendMoveInputServerRpc(vertical, horizontal);
             }
+        }
+
+        // Seul le serveur exécute la simulation (gravité, déplacement, rotation).
+        if (!IsServer) return;
+
+        if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+        {
+            Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
+            _airPenaltyMemory = _airPenality;
+        }
+        else
+        {
+            _airPenaltyMemory = 1f;
+        }
 
         Move();
         Direction();
@@ -149,8 +191,32 @@ public ETeam MyTeam
     private void Update()
     {
         if (!_playable || !IsOwner) return;
-        Jump();
-        Dash();
+
+        // Saut : action ponctuelle, envoyée au serveur qui valide et applique la force.
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (IsServer) TryJump();
+            else RequestJumpServerRpc();
+        }
+
+        // Dash : on envoie l'INTENTION (avant/arrière/gauche/droite), pas un vecteur calculé
+        // localement, pour que ce soit le serveur qui fasse foi sur l'orientation de la voiture.
+        EDashDirection dashDirection = EDashDirection.None;
+
+        if (Input.GetKey(KeyCode.UpArrow))
+            dashDirection = EDashDirection.Forward;
+        else if (Input.GetKey(KeyCode.DownArrow))
+            dashDirection = EDashDirection.Backward;
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            dashDirection = EDashDirection.Left;
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+            dashDirection = EDashDirection.Right;
+
+        if (dashDirection != EDashDirection.None)
+        {
+            if (IsServer) ExecuteDash(dashDirection);
+            else RequestDashServerRpc(dashDirection);
+        }
         
         if (Input.GetKeyDown(KeyCode.U))
             DebugSwitchTeam();
@@ -161,7 +227,7 @@ public ETeam MyTeam
 #region Methodes
     private void Direction()
     {
-        float steerInput = Input.GetAxisRaw("Horizontal");
+        float steerInput = _horizontalInput;
 
         // Rotation proportionnelle à la vitesse, plafonnée
         float speedFactor = Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / MaxSpeed);
@@ -181,8 +247,6 @@ public ETeam MyTeam
     {
         if (_canSpeed)
         {
-            _verticalInput = Input.GetAxis("Vertical");
-
             // Accélération
             Vector3 acceleration = transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
             Rigidbody.AddForce(acceleration, ForceMode.VelocityChange);
@@ -213,59 +277,83 @@ public ETeam MyTeam
         Rigidbody.linearVelocity = draggedVelocity;
     }
 
-    private void Jump()
+    // Exécutée uniquement côté serveur (appelée directement si host, via RPC sinon)
+    private void TryJump()
     {
-        bool canJump = Physics.Raycast(  transform.position, Vector3.down, 1.1f);
+        bool canJump = Physics.Raycast(transform.position, Vector3.down, 1.1f);
 
-        if (Input.GetKeyDown(KeyCode.Space) && canJump)
+        if (canJump)
         {
             Rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         }
     }
 
-    private void Dash()
+    // Exécutée uniquement côté serveur (appelée directement si host, via RPC sinon)
+    private void ExecuteDash(EDashDirection direction)
     {
-        Vector3 dashDir = Vector3.zero;
-        
-        if (Input.GetKey(KeyCode.UpArrow)) 
-            dashDir = transform.forward;
-        else if (Input.GetKey(KeyCode.DownArrow))
-            dashDir = -transform.forward;
-        if ( Input.GetKeyDown(KeyCode.LeftArrow))
-            dashDir = -transform.right;
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-            dashDir = transform.right;
-
-        if (dashDir != Vector3.zero)
+        Vector3 dashDir = direction switch
         {
-            StopCoroutine(StopMaxSpeed());
-            StartCoroutine(StopMaxSpeed());
-            Vector3 dashVelocity = (dashDir * _dashForce) / _airPenaltyMemory;
+            EDashDirection.Forward  => transform.forward,
+            EDashDirection.Backward => -transform.forward,
+            EDashDirection.Left     => -transform.right,
+            EDashDirection.Right    => transform.right,
+            _ => Vector3.zero
+        };
 
-            Rigidbody.linearVelocity = new Vector3(
-                dashVelocity.x,
-                Rigidbody.linearVelocity.y, 
-                dashVelocity.z
-            );
-        }
+        if (dashDir == Vector3.zero) return;
+
+        if (_stopMaxSpeedRoutine != null)
+            StopCoroutine(_stopMaxSpeedRoutine);
+        _stopMaxSpeedRoutine = StartCoroutine(StopMaxSpeed());
+
+        // Mathf.Max évite une division par 0 (ou par une valeur non encore initialisée) -> vitesse infinie
+        Vector3 dashVelocity = (dashDir * _dashForce) / Mathf.Max(_airPenaltyMemory, 1f);
+
+        Rigidbody.linearVelocity = new Vector3(
+            dashVelocity.x,
+            Rigidbody.linearVelocity.y, 
+            dashVelocity.z
+        );
     }
     
 
     #endregion Methodes
 
+#region Network RPCs
+
+    // Input continu de déplacement (avancer/tourner), envoyé chaque FixedUpdate.
+    // Unreliable : la perte occasionnelle d'un paquet n'a aucune conséquence, le suivant arrive juste après.
+    [ServerRpc(Delivery = RpcDelivery.Unreliable)]
+    private void SendMoveInputServerRpc(float vertical, float horizontal)
+    {
+        _verticalInput = vertical;
+        _horizontalInput = horizontal;
+    }
+
+    // Action ponctuelle -> RPC fiable (par défaut) pour ne surtout pas perdre l'événement.
+    [ServerRpc]
+    private void RequestJumpServerRpc()
+    {
+        TryJump();
+    }
+
+    [ServerRpc]
+    private void RequestDashServerRpc(EDashDirection direction)
+    {
+        ExecuteDash(direction);
+    }
+
+#endregion Network RPCs
+
 #region  Coroutines
     private IEnumerator StopMaxSpeed()
     {
-
         MaxSpeed = MaxSpeed * 2f;
 
-            
         yield return new WaitForSeconds(0.5f);
-        
 
-        MaxSpeed = MaxSpeed /2 ;
-
-        StopCoroutine(StopMaxSpeed());
+        MaxSpeed = MaxSpeed / 2f;
+        _stopMaxSpeedRoutine = null;
     }
 
     public IEnumerator StopSpeed(float time)
