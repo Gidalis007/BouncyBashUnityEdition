@@ -5,3 +5,11 @@ public enum ETeam
     RED,
     BLUE
 }
+public enum EDashDirection
+{
+    NONE,
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT
+}

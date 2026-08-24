@@ -226,30 +226,30 @@ public ETeam MyTeam
     private void Dash()
     {
         Vector3 dashDir = Vector3.zero;
-        
-        if (Input.GetKey(KeyCode.UpArrow)) 
+
+        if (Input.GetKey(KeyCode.UpArrow))
             dashDir = transform.forward;
         else if (Input.GetKey(KeyCode.DownArrow))
             dashDir = -transform.forward;
-        if ( Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
             dashDir = -transform.right;
         else if (Input.GetKeyDown(KeyCode.RightArrow))
             dashDir = transform.right;
 
-        if (dashDir != Vector3.zero)
-        {
-            StopCoroutine(StopMaxSpeed());
-            StartCoroutine(StopMaxSpeed());
-            Vector3 dashVelocity = (dashDir * _dashForce) / _airPenaltyMemory;
+        if (dashDir == Vector3.zero) return;
 
-            Rigidbody.linearVelocity = new Vector3(
-                dashVelocity.x,
-                Rigidbody.linearVelocity.y, 
-                dashVelocity.z
-            );
-        }
+        StopCoroutine(StopMaxSpeed());
+        StartCoroutine(StopMaxSpeed());
+        Vector3 dashVelocity = (dashDir * _dashForce) / _airPenaltyMemory;
+
+        Rigidbody.linearVelocity = new Vector3(
+            dashVelocity.x,
+            Rigidbody.linearVelocity.y,
+            dashVelocity.z
+        );
+
     }
-    
+
 
     #endregion Methodes
 

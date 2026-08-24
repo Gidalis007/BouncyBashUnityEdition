@@ -28,6 +28,7 @@ public class CarController : NetworkBehaviour
     [Header("Mouvement Special")]
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _dashForce = 30f;
+    [SerializeField] private float _dashCooldown = 3f;
     [SerializeField] private float _airPenality = 20f;
 
 
@@ -52,8 +53,10 @@ public class CarController : NetworkBehaviour
     private bool _canBeBump = true;
     private float _delayBeBump = .3f;
     private bool _canSpeed = true;
-
-    // Référence à la coroutine de boost du Dash, pour pouvoir vraiment l'arrêter (cf. bug fix)
+    
+    private bool _canDash = true;
+    private Coroutine _dashCooldownRoutine;
+    
     private Coroutine _stopMaxSpeedRoutine;
     
     private Camera _camera;
@@ -65,21 +68,6 @@ public class CarController : NetworkBehaviour
     [SerializeField] private NetworkVariable<float> _testSerialize =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     #endregion Network Attribute & SerializedFields
-
-#region Types
-
-    // Direction du dash envoyée par le client : le serveur reconvertit lui-même
-    // cette intention en vecteur monde à partir de SON propre transform (autorité).
-    private enum EDashDirection
-    {
-        None,
-        Forward,
-        Backward,
-        Left,
-        Right
-    }
-
-#endregion Types
 
 #region Properties
 
@@ -141,8 +129,6 @@ public ETeam MyTeam
         // cette ligne garantit juste le bon état dès le premier frame.
         Rigidbody.isKinematic = !IsServer;
         
-        Debug.Log("OnNetworkSpawn");
-        
         GameManager.Instance.PlayersController.Add(new NetworkObjectReference(this.NetworkObject));
         
         base.OnNetworkSpawn();
@@ -201,24 +187,24 @@ public ETeam MyTeam
 
         // Dash : on envoie l'INTENTION (avant/arrière/gauche/droite), pas un vecteur calculé
         // localement, pour que ce soit le serveur qui fasse foi sur l'orientation de la voiture.
-        EDashDirection dashDirection = EDashDirection.None;
+        EDashDirection dashDirection = EDashDirection.NONE;
 
         if (Input.GetKey(KeyCode.UpArrow))
-            dashDirection = EDashDirection.Forward;
+            dashDirection = EDashDirection.FORWARD;
         else if (Input.GetKey(KeyCode.DownArrow))
-            dashDirection = EDashDirection.Backward;
+            dashDirection = EDashDirection.BACKWARD;
         if (Input.GetKeyDown(KeyCode.LeftArrow))
-            dashDirection = EDashDirection.Left;
+            dashDirection = EDashDirection.LEFT;
         else if (Input.GetKeyDown(KeyCode.RightArrow))
-            dashDirection = EDashDirection.Right;
+            dashDirection = EDashDirection.RIGHT;
 
-        if (dashDirection != EDashDirection.None)
+        if (dashDirection != EDashDirection.NONE)
         {
             if (IsServer) ExecuteDash(dashDirection);
             else RequestDashServerRpc(dashDirection);
         }
         
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.T))
             DebugSwitchTeam();
     }
 
@@ -288,16 +274,17 @@ public ETeam MyTeam
         }
     }
 
-    // Exécutée uniquement côté serveur (appelée directement si host, via RPC sinon)
     private void ExecuteDash(EDashDirection direction)
     {
+        if (!_canDash) return;
+
         Vector3 dashDir = direction switch
         {
-            EDashDirection.Forward  => transform.forward,
-            EDashDirection.Backward => -transform.forward,
-            EDashDirection.Left     => -transform.right,
-            EDashDirection.Right    => transform.right,
-            _ => Vector3.zero
+            EDashDirection.FORWARD => transform.forward,
+            EDashDirection.BACKWARD => -transform.forward,
+            EDashDirection.LEFT => -transform.right,
+            EDashDirection.RIGHT => transform.right,
+            EDashDirection.NONE => Vector3.zero
         };
 
         if (dashDir == Vector3.zero) return;
@@ -306,7 +293,6 @@ public ETeam MyTeam
             StopCoroutine(_stopMaxSpeedRoutine);
         _stopMaxSpeedRoutine = StartCoroutine(StopMaxSpeed());
 
-        // Mathf.Max évite une division par 0 (ou par une valeur non encore initialisée) -> vitesse infinie
         Vector3 dashVelocity = (dashDir * _dashForce) / Mathf.Max(_airPenaltyMemory, 1f);
 
         Rigidbody.linearVelocity = new Vector3(
@@ -314,6 +300,12 @@ public ETeam MyTeam
             Rigidbody.linearVelocity.y, 
             dashVelocity.z
         );
+
+        // Démarrage du cooldown
+        _canDash = false;
+        if (_dashCooldownRoutine != null)
+            StopCoroutine(_dashCooldownRoutine);
+        _dashCooldownRoutine = StartCoroutine(DashCooldownRoutine());
     }
     
 
@@ -321,9 +313,7 @@ public ETeam MyTeam
 
 #region Network RPCs
 
-    // Input continu de déplacement (avancer/tourner), envoyé chaque FixedUpdate.
-    // Unreliable : la perte occasionnelle d'un paquet n'a aucune conséquence, le suivant arrive juste après.
-    [ServerRpc(Delivery = RpcDelivery.Unreliable)]
+    [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
     private void SendMoveInputServerRpc(float vertical, float horizontal)
     {
         _verticalInput = vertical;
@@ -331,13 +321,13 @@ public ETeam MyTeam
     }
 
     // Action ponctuelle -> RPC fiable (par défaut) pour ne surtout pas perdre l'événement.
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     private void RequestJumpServerRpc()
     {
         TryJump();
     }
 
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     private void RequestDashServerRpc(EDashDirection direction)
     {
         ExecuteDash(direction);
@@ -367,6 +357,13 @@ public ETeam MyTeam
     {
         yield return new WaitForSeconds(_delayBeBump);
         _canBeBump = true;
+    }
+    
+    private IEnumerator DashCooldownRoutine()
+    {
+        yield return new WaitForSeconds(_dashCooldown);
+        _canDash = true;
+        _dashCooldownRoutine = null;
     }
 #endregion Courtines
 
