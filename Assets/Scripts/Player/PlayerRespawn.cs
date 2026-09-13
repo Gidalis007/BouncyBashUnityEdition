@@ -17,7 +17,11 @@ public class PlayerRespawn : NetworkBehaviour
     private Vector3 _ogLocation;
     private Quaternion _ogRotation;
     
+    // Timer "physique" : n'existe et n'agit que côté serveur (repositionnement du Rigidbody, comme CarController)
     private float _timer = -1f;
+    
+    // Timer "visuel" : copie locale utilisée uniquement par le owner pour l'affichage du texte
+    private float _uiTimer = -1f;
     
     public override void OnNetworkSpawn()
     {
@@ -29,29 +33,26 @@ public class PlayerRespawn : NetworkBehaviour
 
     private void Update()
     {
-        TimerRespawn();
+        // Seul le serveur a l'autorité sur le Rigidbody désormais -> seul lui fait le vrai repositionnement
+        if (IsServer)
+            TimerRespawn();
+
+        // Le owner gère en parallèle sa propre copie du timer, uniquement pour l'affichage
+        if (IsOwner)
+            TimerUI();
     }
 
 
+    // A appeler côté serveur (ex: détection de chute faite côté serveur, seul fiable niveau physique maintenant)
     public void Respawn(float time)
     {
-        if (!IsOwner) return;
+        if (!IsServer) return;
 
-        _canvas = Instantiate(_canvasPrefab, Vector3.zero, Quaternion.identity, transform);
-        _renderer.SetActive(false);
-        
-        for (int i = 0; i < _canvas.GetComponentsInChildren<TextMeshProUGUI>().Length; i++)
-        {
-            if (_canvas.GetComponentsInChildren<TextMeshProUGUI>()[i].CompareTag("Timer")) 
-                _timerText = _canvas.GetComponentsInChildren<TextMeshProUGUI>()[i];
-        }
-        
+        _timer = time;
         EnablePlayerRpc(false);
         
-        _timer = time;
+        ShowTimerRpc(time);
     }
-    
-
 
     private void TimerRespawn()
     {
@@ -67,16 +68,35 @@ public class PlayerRespawn : NetworkBehaviour
             _rb.position = _ogLocation;
             _rb.rotation = _ogRotation;
             
-            Destroy(_canvas);
-            
             EnablePlayerRpc(true);
             
             return;
         }
 
-        _timerText.text = _timer.ToString("0.0");
         _timer -= Time.deltaTime;
     }
+
+    // Purement visuel, exécuté uniquement chez le owner
+    private void TimerUI()
+    {
+        if (_uiTimer <= -1f) return;
+
+        if (_uiTimer <= 0)
+        {
+            _uiTimer = -1;
+            
+            if (_canvas != null)
+                Destroy(_canvas);
+            
+            return;
+        }
+
+        if (_timerText != null)
+            _timerText.text = _uiTimer.ToString("0.0");
+        
+        _uiTimer -= Time.deltaTime;
+    }
+    
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
     private void EnablePlayerRpc(bool enable)
     {
@@ -86,5 +106,18 @@ public class PlayerRespawn : NetworkBehaviour
         GetComponent<CarController>().enabled = enable;
     }
 
+    // Instancie le canvas de timer chez le owner uniquement (affichage local)
+    [Rpc(SendTo.Owner)]
+    private void ShowTimerRpc(float time)
+    {
+        _canvas = Instantiate(_canvasPrefab, Vector3.zero, Quaternion.identity, transform);
+        
+        foreach (var text in _canvas.GetComponentsInChildren<TextMeshProUGUI>())
+        {
+            if (text.CompareTag("Timer"))
+                _timerText = text;
+        }
 
+        _uiTimer = time;
+    }
 }
