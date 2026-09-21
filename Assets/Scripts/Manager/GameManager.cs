@@ -35,6 +35,20 @@ public class GameManager : NetworkBehaviour
     #endregion Properties
 
     #region Mono
+
+    private void Update()
+    {
+        if (NetworkManager.Singleton.IsServer) Debug.Log("Debug");
+        
+        /*for (int i = 0; i < _playersController.Count; i++)
+        {
+            _playersController[i].TryGet(out NetworkObject player);
+            if (player.GetComponent<NetworkBehaviour>().IsServer)
+            {
+                Debug.Log("PlayersController Count: " + _playersController.Count);
+            }
+        }*/
+    }
     private void Awake() // Makes it a singleton
     {
         if (_instance == null)
