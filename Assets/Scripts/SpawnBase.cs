@@ -13,7 +13,7 @@ public class SpawnBase : NetworkBehaviour
     [SerializeField] private GameObject _playerOneSpawn;
     [SerializeField] private GameObject _playerTwoSpawn;
 
-    [SerializeField] private float _delayBeforeSpawn = 1f;
+    [SerializeField] private float _delayBeforeSpawn = 0.1f;
     private float _timer = 0f;
 
     private bool _spawn = false;
