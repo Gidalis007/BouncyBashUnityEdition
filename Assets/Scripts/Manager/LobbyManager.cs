@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VectorGraphics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,8 +10,7 @@ public class LobbyManager : NetworkBehaviour
 {
     #region Attributes
     private static LobbyManager _instance = null;
-    private Dictionary<ETeam, int> _teamsPoints = new Dictionary<ETeam, int>();
-    private NetworkList<NetworkObjectReference> _playersController = new NetworkList<NetworkObjectReference>(null, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
     #endregion Attributes
 
     #region Events
@@ -20,17 +20,7 @@ public class LobbyManager : NetworkBehaviour
     #region Properties
     public static LobbyManager Instance { get => _instance; }
 
-    public Dictionary<ETeam, int> TeamsPoints
-    {
-        get => _teamsPoints;
-        set => _teamsPoints = value;
-    }
 
-    public NetworkList<NetworkObjectReference> PlayersController
-    {
-        get => _playersController;
-        set => _playersController = value;
-    }
 
     #endregion Properties
 
@@ -38,16 +28,10 @@ public class LobbyManager : NetworkBehaviour
 
     private void Update()
     {
-        if (NetworkManager.Singleton.IsServer) Debug.Log("Debug");
-        
-        /*for (int i = 0; i < _playersController.Count; i++)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            _playersController[i].TryGet(out NetworkObject player);
-            if (player.GetComponent<NetworkBehaviour>().IsServer)
-            {
-                Debug.Log("PlayersController Count: " + _playersController.Count);
-            }
-        }*/
+            StartGameRpc("GameScene");
+        }
     }
     private void Awake() // Makes it a singleton
     {
@@ -55,12 +39,25 @@ public class LobbyManager : NetworkBehaviour
             _instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    
+
 
     #endregion Mono
 
     #region Methods
-    
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void StartGameRpc(string sceneName)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            sceneName,
+            LoadSceneMode.Single
+        );
+    }
     
     #endregion Methods
 }

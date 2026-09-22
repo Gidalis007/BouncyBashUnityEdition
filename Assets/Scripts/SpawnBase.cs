@@ -36,6 +36,7 @@ public class SpawnBase : NetworkBehaviour
         GameObject playerSpawn = null;
         if (playerCount == 1)
         {
+            Debug.LogWarning("Player 1 Spawn");
             GameManager.Instance.PlayersController[0].TryGet(out NetworkObject player);
             playerSpawn = GameObject.FindGameObjectWithTag("SpawnOne");
             player.transform.position = playerSpawn.transform.position;
@@ -48,13 +49,13 @@ public class SpawnBase : NetworkBehaviour
             playerSpawn = GameObject.FindGameObjectWithTag("SpawnTwo");
             player.transform.position = playerSpawn.transform.position;
             player.transform.rotation = playerSpawn.transform.rotation;
-            Destroy(gameObject);
+          //  Destroy(gameObject);
         }
     }
 
     private void Update()
     {
-        if (!_spawn && !IsOwner) return;
+        if (!_spawn) return;
 
         if (_timer <= _delayBeforeSpawn)
         {
@@ -63,6 +64,7 @@ public class SpawnBase : NetworkBehaviour
         }
         else
         {
+            _timer = 0f;
             _spawn = false;
             SpawnRpc();
         }
