@@ -5476,43 +5476,43 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorRed.b
+      propertyPath: _colorRed.b
       value: 0.3291626
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorRed.g
+      propertyPath: _colorRed.g
       value: 0.3291626
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorRed.r
+      propertyPath: _colorRed.r
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorBlue.g
+      propertyPath: _colorBlue.g
       value: 0.8235294
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorBlue.r
+      propertyPath: _colorBlue.r
       value: 0.32941177
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorNone.b
+      propertyPath: _colorNone.b
       value: 0.36078432
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorNone.g
+      propertyPath: _colorNone.g
       value: 0.47058827
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: colorNone.r
+      propertyPath: _colorNone.r
       value: 0.62352943
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: captureThreshold
+      propertyPath: _captureThreshold
       value: 0.78
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
-      propertyPath: textureResolution
+      propertyPath: _textureResolution
       value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 3928240642246200571, guid: ffa18a797399db7009087483d337ecc3, type: 3}

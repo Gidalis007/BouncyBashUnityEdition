@@ -275,8 +275,8 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 2
-  brushRadius: 2
-  paintInterval: 0
+  _brushRadius: 2
+  _paintInterval: 0
 --- !u!114 &2000941089885039389
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,24 +17,25 @@ public class PlatformController : NetworkBehaviour
     [Header("Résolution de la texture de peinture")]
     [Tooltip("Plus la résolution est haute, plus la peinture est précise (mais plus c'est lourd).")]
     [SerializeField]
-    private int textureResolution = 256;
+    private int _textureResolution = 256;
 
     [Header("Couleurs des teams")] [SerializeField]
-    private Color colorNone = Color.white;
+    private Color _colorNone = Color.white;
 
-    [SerializeField] private Color colorBlue = Color.blue;
-    [SerializeField] private Color colorRed = Color.red;
+    [SerializeField] private Color _colorBlue = Color.blue;
+    [SerializeField] private Color _colorRed = Color.red;
 
     [Header("Capture")]
     [Range(0f, 1f)]
     [Tooltip("Pourcentage de la plateforme nécessaire pour capturer (0.6 = 60%).")]
     [SerializeField]
-    private float captureThreshold = 0.6f;
+    private float _captureThreshold = 0.6f;
 
     [Tooltip("Si vrai, la plateforme est remplie à 100% par la team dès que le seuil est atteint.")] [SerializeField]
-    private bool floodFillOnCapture = true;
+    private bool _floodFillOnCapture = true;
 
-    [Header("Events")] public TeamEvent OnPlatformCaptured;
+    [Header("Events")] [SerializeField]
+    private TeamEvent _onPlatformCaptured;
 
     #endregion Serialized Fields
 
@@ -77,9 +78,9 @@ public class PlatformController : NetworkBehaviour
 
     private void InitTexture()
     {
-        _paintTexture = new Texture2D(textureResolution, textureResolution, TextureFormat.RGBA32, false);
+        _paintTexture = new Texture2D(_textureResolution, _textureResolution, TextureFormat.RGBA32, false);
 
-        _totalPixels = textureResolution * textureResolution;
+        _totalPixels = _textureResolution * _textureResolution;
         _pixelTeams = new ETeam[_totalPixels];
 
         _teamPixelCount = new Dictionary<ETeam, int>
@@ -93,7 +94,7 @@ public class PlatformController : NetworkBehaviour
         for (int i = 0; i < _totalPixels; i++)
         {
             _pixelTeams[i] = ETeam.NONE;
-            initColors[i] = colorNone;
+            initColors[i] = _colorNone;
         }
 
         _paintTexture.SetPixels32(initColors);
@@ -113,7 +114,7 @@ public class PlatformController : NetworkBehaviour
     private void CheckTeamCapture(ETeam team)
     {
         float ratio = (float)_teamPixelCount[team] / _totalPixels;
-        if (ratio >= captureThreshold && _currentOwner.Value != team)
+        if (ratio >= _captureThreshold && _currentOwner.Value != team)
         {
             CapturePlatformRpc(team);
         }
@@ -155,9 +156,9 @@ public class PlatformController : NetworkBehaviour
     {
         switch (team)
         {
-            case ETeam.BLUE: return colorBlue;
-            case ETeam.RED: return colorRed;
-            default: return colorNone;
+            case ETeam.BLUE: return _colorBlue;
+            case ETeam.RED: return _colorRed;
+            default: return _colorNone;
         }
     }
 
@@ -167,11 +168,11 @@ public class PlatformController : NetworkBehaviour
         Vector2 uv = WorldToUV(worldPosition);
         if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return; // en dehors de la plateforme
 
-        int centerX = Mathf.RoundToInt(uv.x * (textureResolution - 1));
-        int centerY = Mathf.RoundToInt(uv.y * (textureResolution - 1));
+        int centerX = Mathf.RoundToInt(uv.x * (_textureResolution - 1));
+        int centerY = Mathf.RoundToInt(uv.y * (_textureResolution - 1));
 
         float platformSize = GetPlatformWorldSize();
-        int pixelRadius = Mathf.Max(1, Mathf.RoundToInt((brushRadiusWorld / platformSize) * textureResolution));
+        int pixelRadius = Mathf.Max(1, Mathf.RoundToInt((brushRadiusWorld / platformSize) * _textureResolution));
 
         bool changed = false;
 
@@ -183,9 +184,9 @@ public class PlatformController : NetworkBehaviour
 
                 int px = centerX + x;
                 int py = centerY + y;
-                if (px < 0 || px >= textureResolution || py < 0 || py >= textureResolution) continue;
+                if (px < 0 || px >= _textureResolution || py < 0 || py >= _textureResolution) continue;
 
-                int index = py * textureResolution + px;
+                int index = py * _textureResolution + px;
                 ETeam previous = _pixelTeams[index];
                 if (previous == team) continue;
 
@@ -215,12 +216,12 @@ public class PlatformController : NetworkBehaviour
         _currentOwner.Value = team;
         _isCaptured = true;
 
-        if (floodFillOnCapture)
+        if (_floodFillOnCapture)
         {
             FillAllWithRpc(team);
         }
 
-        OnPlatformCaptured?.Invoke(team);
+        _onPlatformCaptured?.Invoke(team);
     }
 
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]

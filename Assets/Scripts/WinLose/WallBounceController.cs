@@ -26,7 +26,7 @@ public class WallBounceController : MonoBehaviour
 
     [Header("Anti-collage au mur")]
     [Tooltip("Distance dont l'objet est repoussé hors du mur à chaque frame de contact (0 = désactivé)")]
-    public float _pushForce = 2f;
+    [SerializeField] private float _pushForce = 2f;
     #endregion
     
     #region Attribute

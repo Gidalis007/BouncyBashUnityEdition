@@ -11,10 +11,10 @@ public class PainterController : NetworkBehaviour
     
     [Space]
     [Tooltip("Rayon du pinceau mètres")]
-    [SerializeField] private float brushRadius = 0.5f;
-    
+    [SerializeField] private float _brushRadius = 0.5f;
+
     [Tooltip("Intervalle minimum (en secondes) entre deux peintures, pour éviter de surcharger le CPU.")]
-    [SerializeField] private float paintInterval = 0.05f;
+    [SerializeField] private float _paintInterval = 0.05f;
     
     #endregion SerializedFields
     
@@ -59,12 +59,12 @@ public class PainterController : NetworkBehaviour
 
     private void TryPaint(Collider other)
     {
-        if (_paintTimer < paintInterval) return;
+        if (_paintTimer < _paintInterval) return;
 
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        platform.Paint(transform.position, _team.Value, brushRadius);
+        platform.Paint(transform.position, _team.Value, _brushRadius);
         _paintTimer = 0f;
     }
 

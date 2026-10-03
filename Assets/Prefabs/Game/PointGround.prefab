@@ -180,12 +180,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b707d9ee8e41edf9f4c3adce022c7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformController
-  textureResolution: 256
-  colorNone: {r: 1, g: 1, b: 1, a: 1}
-  colorBlue: {r: 0, g: 0, b: 1, a: 1}
-  colorRed: {r: 1, g: 0, b: 0, a: 1}
-  captureThreshold: 0.6
-  floodFillOnCapture: 1
-  OnPlatformCaptured:
+  _textureResolution: 256
+  _colorNone: {r: 1, g: 1, b: 1, a: 1}
+  _colorBlue: {r: 0, g: 0, b: 1, a: 1}
+  _colorRed: {r: 1, g: 0, b: 0, a: 1}
+  _captureThreshold: 0.6
+  _floodFillOnCapture: 1
+  _onPlatformCaptured:
     m_PersistentCalls:
       m_Calls: []
