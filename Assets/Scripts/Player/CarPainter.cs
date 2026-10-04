@@ -23,6 +23,9 @@ public class CarPainter : PainterController
     protected override ETeam PaintTeam => _paintTeam;
     protected override bool CanPaint => _painting;
 
+    // La voiture peint côté serveur uniquement, pour que tous voient ses coups.
+    protected override bool ServerAuthoritative => true;
+
     // Pas de transfert d'ownership pour la voiture (comportement réservé à la bille).
     protected override void OnPlayerTouched(Collision collision)
     {

@@ -14,18 +14,23 @@ public class ScoreBarUI : MonoBehaviour
 
     #region Methods
 
-    // Moitiés fixes rouge/bleu : chaque moitié se remplit de son côté (rouge depuis
-    // la gauche, bleu depuis la droite) + % absolus en texte.
+    // Moitiés fixes rouge/bleu : chaque moitié se remplit depuis l'extérieur,
+    // pilotée en largeur (pas de fillAmount : ignoré sans sprite).
     public void SetScores(float red, float blue)
     {
+        red = Mathf.Clamp01(red);
+        blue = Mathf.Clamp01(blue);
+
         if (_redFill != null)
         {
-            _redFill.fillAmount = Mathf.Clamp01(red);
+            RectTransform rect = _redFill.rectTransform;
+            rect.anchorMax = new Vector2(red * 0.5f, 1f);
         }
 
         if (_blueFill != null)
         {
-            _blueFill.fillAmount = Mathf.Clamp01(blue);
+            RectTransform rect = _blueFill.rectTransform;
+            rect.anchorMin = new Vector2(1f - blue * 0.5f, 0f);
         }
 
         if (_scoreText != null)

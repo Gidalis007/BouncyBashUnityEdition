@@ -202,10 +202,10 @@ public class PlatformController : NetworkBehaviour
     }
 
 
-    public void Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
+    public bool Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
     {
         Vector2 uv = WorldToUV(worldPosition);
-        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return; // en dehors de la plateforme
+        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return false; // en dehors de la plateforme
 
         int centerX = Mathf.RoundToInt(uv.x * (_textureResolution - 1));
         int centerY = Mathf.RoundToInt(uv.y * (_textureResolution - 1));
@@ -243,6 +243,8 @@ public class PlatformController : NetworkBehaviour
             _paintTexture.Apply(false);
             CheckCapture();
         }
+
+        return changed;
     }
 
     #endregion public methods

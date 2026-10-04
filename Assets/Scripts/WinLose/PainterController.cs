@@ -60,6 +60,11 @@ public class PainterController : NetworkBehaviour
     protected virtual ETeam PaintTeam => _team.Value;
     protected virtual bool CanPaint => true;
 
+    // Peinture d'autorité serveur : seul le serveur peint, puis diffuse le coup
+    // à tous les pairs (sinon chacun peint sa copie locale et ça diverge).
+    // La bille garde false : comportement local inchangé.
+    protected virtual bool ServerAuthoritative => false;
+
     private void TryPaint(Collider other)
     {
         if (!CanPaint || _paintTimer < _paintInterval) return;
@@ -67,8 +72,16 @@ public class PainterController : NetworkBehaviour
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        platform.Paint(transform.position, PaintTeam, _brushRadius);
+        // Hors serveur, la peinture autoritaire ne s'applique que via BroadcastStrokeRpc.
+        if (ServerAuthoritative && !IsServer) return;
+
+        bool changed = platform.Paint(transform.position, PaintTeam, _brushRadius);
         _paintTimer = 0f;
+
+        if (changed && ServerAuthoritative && IsServer)
+        {
+            BroadcastStrokeRpc(transform.position, PaintTeam, _brushRadius);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -92,7 +105,21 @@ public class PainterController : NetworkBehaviour
     {
         GetComponent<NetworkObject>().ChangeOwnership(ownerClientId);
     }
-    
+
+    // Diffuse un coup de pinceau d'autorité serveur (réappliqué localement partout).
+    // Paint() ignore les plateformes hors zone, et réappliquer le même coup est sans effet.
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void BroadcastStrokeRpc(Vector3 worldPosition, ETeam team, float radius)
+    {
+        foreach (PlatformController platform in FindObjectsByType<PlatformController>())
+        {
+            if (platform != null)
+            {
+                platform.Paint(worldPosition, team, radius);
+            }
+        }
+    }
+        
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ChangeTeamRpc(ETeam team)
