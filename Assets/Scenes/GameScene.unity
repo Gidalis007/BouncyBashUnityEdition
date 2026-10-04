@@ -6161,6 +6161,7 @@ GameObject:
   - component: {fileID: 1302560229}
   - component: {fileID: 1302560227}
   - component: {fileID: 1302560228}
+  - component: {fileID: 1302560230}
   m_Layer: 0
   m_Name: GameStartCountdown
   m_TagString: Untagged
@@ -6223,6 +6224,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameStartCountdown
   ShowTopMostFoldoutHeaderGroup: 1
   _countdownCanvasPrefab: {fileID: 770001001, guid: 9f9c5704f54342c2fe8a2077ed58eab5, type: 3}
+--- !u!114 &1302560230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302560226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67ed4762e2ac4cc7ade7c76aa911d48f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GameTimer
+  _gameDuration: 180
+  _winSceneName: WinScene
+  _timerCanvasPrefab: {fileID: 770002001, guid: 7f448ff7e4134852949a0a8626b0982f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
