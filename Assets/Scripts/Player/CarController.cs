@@ -35,6 +35,10 @@ public class CarController : NetworkBehaviour
     [Space]
     [Header("Gravity")]
     [SerializeField] float _extraGravity = 20f;
+
+    [Space]
+    [Header("Dash Indicator")]
+    [SerializeField] private DashIndicator _dashIndicator;
     
 #endregion Serialized Fields
     
@@ -56,6 +60,10 @@ public class CarController : NetworkBehaviour
     
     private bool _canDash = true;
     private Coroutine _dashCooldownRoutine;
+
+    // Miroir réseau de _canDash pour l'indicateur visuel (lecture seule côté affichage).
+    // La logique du dash et son cooldown restent inchangés et vivent uniquement côté serveur.
+    private NetworkVariable<bool> _dashReady = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
     private Coroutine _stopMaxSpeedRoutine;
     
@@ -116,6 +124,11 @@ public bool IsTeamTwo
     get => MyTeam == ETeam.BLUE;
 }
 
+public bool IsDashReady
+{
+    get => IsServer ? _canDash : _dashReady.Value;
+}
+
 #endregion Properties
 
 #region Mono
@@ -143,6 +156,9 @@ public bool IsTeamTwo
         _myTeam.OnValueChanged += OnTeamChanged;
         ApplyTeamColor(MyTeam);
 
+        _dashReady.OnValueChanged += OnDashReadyChanged;
+        UpdateDashIndicator(_dashReady.Value);
+
         // Filet de sécurité : seul le serveur simule la physique (Rigidbody non-kinematic).
         // NetworkRigidbody gère normalement déjà ce switch automatiquement selon l'autorité,
         // cette ligne garantit juste le bon état dès le premier frame.
@@ -156,6 +172,7 @@ public bool IsTeamTwo
     public override void OnNetworkDespawn()
     {
         _myTeam.OnValueChanged -= OnTeamChanged;
+        _dashReady.OnValueChanged -= OnDashReadyChanged;
 
         base.OnNetworkDespawn();
     }
@@ -329,6 +346,8 @@ public bool IsTeamTwo
 
         // Démarrage du cooldown
         _canDash = false;
+        _dashReady.Value = false;
+        UpdateDashIndicator(false);
         if (_dashCooldownRoutine != null)
             StopCoroutine(_dashCooldownRoutine);
         _dashCooldownRoutine = StartCoroutine(DashCooldownRoutine());
@@ -336,6 +355,21 @@ public bool IsTeamTwo
     
 
     #endregion Methodes
+
+#region Dash Indicator
+
+    private void OnDashReadyChanged(bool previousReady, bool newReady)
+    {
+        UpdateDashIndicator(newReady);
+    }
+
+    private void UpdateDashIndicator(bool ready)
+    {
+        if (_dashIndicator != null)
+            _dashIndicator.SetAvailable(ready);
+    }
+
+#endregion Dash Indicator
 
 #region Team
 
@@ -415,6 +449,8 @@ public bool IsTeamTwo
     {
         yield return new WaitForSeconds(_dashCooldown);
         _canDash = true;
+        _dashReady.Value = true;
+        UpdateDashIndicator(true);
         _dashCooldownRoutine = null;
     }
 #endregion Courtines
