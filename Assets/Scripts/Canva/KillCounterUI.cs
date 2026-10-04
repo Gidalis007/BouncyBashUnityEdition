@@ -54,9 +54,23 @@ public class KillCounterUI : MonoBehaviour
             return;
         }
 
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening)
+        {
+            return;
+        }
+
         foreach (NetworkObjectReference playerReference in GameManager.Instance.PlayersController)
         {
-            if (!playerReference.TryGet(out NetworkObject player))
+            NetworkObject player;
+
+            try
+            {
+                if (!playerReference.TryGet(out player))
+                {
+                    continue;
+                }
+            }
+            catch
             {
                 continue;
             }

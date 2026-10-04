@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -48,6 +49,11 @@ public class ScoreManager : NetworkBehaviour
         MatchWinner = ETeam.NONE;
         _refreshTimer = 0f;
         _gameOver = false;
+
+        if (IsServer)
+        {
+            InitTerrainRpc();
+        }
 
         ShowBar();
     }
@@ -105,10 +111,9 @@ public class ScoreManager : NetworkBehaviour
             return;
         }
 
-        NetworkManager.SceneManager.LoadScene(
-            _winSceneName,
-            LoadSceneMode.Single
-        );
+        SceneTransition.EnsureExists();
+        NotifyTransitionRpc();
+        StartCoroutine(LoadSceneAfterFade());
     }
 
     // Seul le serveur lit l'état réel des plateformes (seul à simuler la physique).
@@ -187,6 +192,22 @@ public class ScoreManager : NetworkBehaviour
         }
     }
 
+    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
+    private IEnumerator LoadSceneAfterFade()
+    {
+        yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);
+
+        if (NetworkManager == null || !IsServer)
+        {
+            yield break;
+        }
+
+        NetworkManager.SceneManager.LoadScene(
+            _winSceneName,
+            LoadSceneMode.Single
+        );
+    }
+
     #endregion Methods
 
     #region Network RPCs
@@ -199,6 +220,26 @@ public class ScoreManager : NetworkBehaviour
         if (IsServer && GameManager.Instance != null)
         {
             GameManager.Instance.WinnerTeam = winner;
+        }
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void NotifyTransitionRpc()
+    {
+        SceneTransition.EnsureExists();
+        SceneTransition.Instance.FadeOut();
+    }
+
+    // Début de partie : la moitié du terrain en rouge, l'autre en bleu, sur tous les pairs.
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void InitTerrainRpc()
+    {
+        foreach (PlatformController platform in FindObjectsByType<PlatformController>())
+        {
+            if (platform != null)
+            {
+                platform.InitHalfSplit();
+            }
         }
     }
 

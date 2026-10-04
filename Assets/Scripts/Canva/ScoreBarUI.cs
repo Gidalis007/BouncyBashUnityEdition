@@ -14,20 +14,18 @@ public class ScoreBarUI : MonoBehaviour
 
     #region Methods
 
-    // Affiche la part de chaque équipe (rouge à gauche, bleu à droite) + les % absolus.
+    // Moitiés fixes rouge/bleu : chaque moitié se remplit de son côté (rouge depuis
+    // la gauche, bleu depuis la droite) + % absolus en texte.
     public void SetScores(float red, float blue)
     {
-        float painted = red + blue;
-        float redShare = painted > 0.0001f ? red / painted : 0.5f;
-
         if (_redFill != null)
         {
-            _redFill.rectTransform.anchorMax = new Vector2(redShare, 1f);
+            _redFill.fillAmount = Mathf.Clamp01(red);
         }
 
         if (_blueFill != null)
         {
-            _blueFill.rectTransform.anchorMin = new Vector2(redShare, 0f);
+            _blueFill.fillAmount = Mathf.Clamp01(blue);
         }
 
         if (_scoreText != null)

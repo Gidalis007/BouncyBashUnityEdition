@@ -159,6 +159,38 @@ public class PlatformController : NetworkBehaviour
         return _teamPixelCount.TryGetValue(team, out int count) ? count : 0;
     }
 
+    // Début de partie : moitié gauche (u < 0.5) rouge, moitié droite bleue.
+    // Local uniquement : appelé sur chaque pair via RPC (voir ScoreManager).
+    public void InitHalfSplit()
+    {
+        if (_pixelTeams == null || _paintTexture == null) return;
+
+        Color32 redColor = GetColorForTeam(ETeam.RED);
+        Color32 blueColor = GetColorForTeam(ETeam.BLUE);
+        Color32[] colors = new Color32[_totalPixels];
+
+        int half = _textureResolution / 2;
+        int redCount = 0;
+
+        for (int i = 0; i < _totalPixels; i++)
+        {
+            bool isRed = (i % _textureResolution) < half;
+            _pixelTeams[i] = isRed ? ETeam.RED : ETeam.BLUE;
+            colors[i] = isRed ? redColor : blueColor;
+
+            if (isRed) redCount++;
+        }
+
+        _teamPixelCount[ETeam.NONE] = 0;
+        _teamPixelCount[ETeam.RED] = redCount;
+        _teamPixelCount[ETeam.BLUE] = _totalPixels - redCount;
+
+        _paintTexture.SetPixels32(colors);
+        _paintTexture.Apply(false);
+
+        _isCaptured = false;
+    }
+
     public Color GetColorForTeam(ETeam team)
     {
         switch (team)

@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -121,10 +122,9 @@ public class GameTimer : NetworkBehaviour
             return;
         }
 
-        NetworkManager.SceneManager.LoadScene(
-            _winSceneName,
-            LoadSceneMode.Single
-        );
+        SceneTransition.EnsureExists();
+        NotifyTransitionRpc();
+        StartCoroutine(LoadSceneAfterFade());
     }
 
     private void ShowTimer()
@@ -171,6 +171,29 @@ public class GameTimer : NetworkBehaviour
         {
             Destroy(_canvas);
         }
+    }
+
+    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
+    private IEnumerator LoadSceneAfterFade()
+    {
+        yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);
+
+        if (NetworkManager == null || !IsServer)
+        {
+            yield break;
+        }
+
+        NetworkManager.SceneManager.LoadScene(
+            _winSceneName,
+            LoadSceneMode.Single
+        );
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void NotifyTransitionRpc()
+    {
+        SceneTransition.EnsureExists();
+        SceneTransition.Instance.FadeOut();
     }
 
     #endregion Methods

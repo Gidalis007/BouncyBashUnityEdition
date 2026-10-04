@@ -90,10 +90,32 @@ public class LobbyManager : NetworkBehaviour
             return;
         }
 
+        SceneTransition.EnsureExists();
+        NotifyTransitionRpc();
+        StartCoroutine(LoadSceneAfterFade(sceneName));
+    }
+
+    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
+    private IEnumerator LoadSceneAfterFade(string sceneName)
+    {
+        yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);
+
+        if (NetworkManager == null || !IsServer)
+        {
+            yield break;
+        }
+
         NetworkManager.Singleton.SceneManager.LoadScene(
             sceneName,
             LoadSceneMode.Single
         );
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void NotifyTransitionRpc()
+    {
+        SceneTransition.EnsureExists();
+        SceneTransition.Instance.FadeOut();
     }
     
     #endregion Methods

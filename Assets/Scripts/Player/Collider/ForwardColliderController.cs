@@ -103,7 +103,8 @@ public class ForwardColliderController : NetworkBehaviour
         {
             _myCarController.NotifyPlayerBump();
 
-            CarController victimCar = bump.GetComponent<CarController>();
+            // InParent : le trigger peut toucher un enfant visuel de la victime.
+            CarController victimCar = bump.GetComponentInParent<CarController>();
 
             if (victimCar != null)
             {

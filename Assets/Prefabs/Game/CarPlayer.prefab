@@ -414,7 +414,7 @@ MonoBehaviour:
   _airPenality: 1.5
   _extraGravity: 20
   _dashIndicator: {fileID: 102}
-  _carPainter: {fileID: 0}
+  _carPainter: {fileID: 6068520253656590756}
   _killCreditWindow: 6
   _testSerialize:
     UpdateTraits:

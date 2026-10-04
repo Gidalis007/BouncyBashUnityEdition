@@ -48,12 +48,16 @@ public class MainMenu : MonoBehaviour
 
     public void Host()
     {
-        NetworkManager.Singleton.StartHost();
-        transform.gameObject.SetActive(false);
-        NetworkManager.Singleton.SceneManager.LoadScene(
-            "SampleScene",
-            LoadSceneMode.Single
-        );
+        SceneTransition.EnsureExists();
+        SceneTransition.Instance.FadeOut(() =>
+        {
+            NetworkManager.Singleton.StartHost();
+            transform.gameObject.SetActive(false);
+            NetworkManager.Singleton.SceneManager.LoadScene(
+                "SampleScene",
+                LoadSceneMode.Single
+            );
+        });
     }
 
     public void Client()
