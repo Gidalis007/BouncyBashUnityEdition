@@ -10,8 +10,8 @@ public class NetworkStartUI : MonoBehaviour
    [SerializeField] private string _sceneName;
    #endregion Serializedfields
    #region Methodes
-   
-   
+
+
    public void Host()
    {
       NetworkManager.Singleton.StartHost();
@@ -23,6 +23,6 @@ public class NetworkStartUI : MonoBehaviour
       NetworkManager.Singleton.StartClient();
       transform.gameObject.SetActive(false);
    }
-   
+
    #endregion Methodes
 }

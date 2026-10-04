@@ -16,9 +16,9 @@ public class CarControllerPrevious : NetworkBehaviour
 #region Serialized Fields
     [SerializeField] private bool _playable = true;
 
-    [Header("Teams")] 
+    [Header("Teams")]
     [SerializeField] private NetworkVariable<ETeam>  _myTeam = new NetworkVariable<ETeam>(ETeam.NONE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    
+
     [Space]
     [Header("Mouvement Base")]
     [SerializeField] private float _moveSpeed = 50f;
@@ -26,7 +26,7 @@ public class CarControllerPrevious : NetworkBehaviour
     [SerializeField] private float _drag = 0.98f;
     [SerializeField] private float _steerAngle = 20f;
     [SerializeField] private float _traction = 1f;
-    
+
     [Space]
     [Header("Mouvement Special")]
     [SerializeField] private float _jumpForce = 5f;
@@ -37,27 +37,27 @@ public class CarControllerPrevious : NetworkBehaviour
     [Space]
     [Header("Gravity")]
     [SerializeField] float _extraGravity = 20f;
-    
+
 #endregion Serialized Fields
-    
+
 #region Attributes
     private Rigidbody _rigidbody;
     private Collider _playerCollider;
     private bool _stopMaxSpeed;
-    
+
     private float _verticalInput;
-    
+
     private float _airPenaltyMemory;
-    
+
     private bool _canBeBump = true;
     private float _delayBeBump = .3f;
     private bool _canSpeed = true;
-    
+
     private Camera _camera;
-    
-    
+
+
     #endregion Attributes
-    
+
 #region Network Attribute & SerializedFields
     [SerializeField] private NetworkVariable<float> _testSerialize =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -82,7 +82,7 @@ public bool CanBeBump
         {
             _canBeBump = value;
             StartCoroutine(DelayCanBump());
-        } 
+        }
     }
 }
 
@@ -106,7 +106,7 @@ public ETeam MyTeam
     private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
-        
+
     }
 
     public override void OnNetworkSpawn()
@@ -117,11 +117,11 @@ public ETeam MyTeam
         {
             _camera.enabled = false;
         }
-        
+
         Debug.Log("OnNetworkSpawn");
-        
+
         GameManager.Instance.PlayersController.Add(new NetworkObjectReference(this.NetworkObject));
-        
+
         base.OnNetworkSpawn();
     }
 
@@ -151,7 +151,7 @@ public ETeam MyTeam
         if (!_playable || !IsOwner) return;
         Jump();
         Dash();
-        
+
         if (Input.GetKeyDown(KeyCode.U))
             DebugSwitchTeam();
     }
@@ -163,10 +163,8 @@ public ETeam MyTeam
     {
         float steerInput = Input.GetAxisRaw("Horizontal");
 
-        // Rotation proportionnelle à la vitesse, plafonnée
         float speedFactor = Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / MaxSpeed);
 
-        // Courbe : tourne bien dès le départ, légèrement moins vite à haute vitesse
         float rotationFactor = Mathf.Lerp(0.5f, 1f, speedFactor);
 
         float rotationAmount = steerInput * _steerAngle * rotationFactor * Time.fixedDeltaTime * 60f;
@@ -183,11 +181,9 @@ public ETeam MyTeam
         {
             _verticalInput = Input.GetAxis("Vertical");
 
-            // Accélération
             Vector3 acceleration = transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
             Rigidbody.AddForce(acceleration, ForceMode.VelocityChange);
 
-            // Limitation vitesse (horizontal uniquement)
             Vector3 flatVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             if (flatVelocity.magnitude > MaxSpeed)
             {
@@ -195,7 +191,6 @@ public ETeam MyTeam
                 Rigidbody.linearVelocity = new Vector3(capped.x, Rigidbody.linearVelocity.y, capped.z);
             }
 
-            // Traction
             flatVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
             Vector3 forward = transform.forward * Vector3.Dot(flatVelocity, transform.forward);
@@ -204,7 +199,6 @@ public ETeam MyTeam
             Rigidbody.linearVelocity = new Vector3(tractedVelocity.x, Rigidbody.linearVelocity.y, tractedVelocity.z);
         }
 
-        // Drag
         Vector3 draggedVelocity = new Vector3(
             Rigidbody.linearVelocity.x * _drag,
             Rigidbody.linearVelocity.y,
@@ -259,9 +253,9 @@ public ETeam MyTeam
 
         MaxSpeed = MaxSpeed * 2f;
 
-            
+
         yield return new WaitForSeconds(0.5f);
-        
+
 
         MaxSpeed = MaxSpeed /2 ;
 
@@ -290,7 +284,7 @@ private void DebugSwitchTeam()
         MyTeam = ETeam.RED;
     else if (MyTeam == ETeam.RED)
         MyTeam = ETeam.BLUE;
-    else 
+    else
         MyTeam = ETeam.RED;
 }
 

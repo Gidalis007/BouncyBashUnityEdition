@@ -13,9 +13,9 @@ public class CarController : NetworkBehaviour
 #region Serialized Fields
     [SerializeField] private bool _playable = true;
 
-    [Header("Teams")] 
+    [Header("Teams")]
     [SerializeField] private NetworkVariable<ETeam>  _myTeam = new NetworkVariable<ETeam>(ETeam.NONE, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    
+
     [Space]
     [Header("Mouvement Base")]
     [SerializeField] private float _moveSpeed = 50f;
@@ -23,11 +23,10 @@ public class CarController : NetworkBehaviour
     [SerializeField] private float _drag = 0.98f;
     [SerializeField] private float _steerAngle = 20f;
     [SerializeField] private float _traction = 1f;
-    
+
     [Space]
     [Header("Mouvement Special")]
     [SerializeField] private float _jumpForce = 5f;
-    // Fenêtre de tolérance pour sauter après avoir quitté le sol (secondes).
     [SerializeField] private float _coyoteTime = 0.1f;
     [SerializeField] private float _dashForce = 30f;
     [SerializeField] private float _dashCooldown = 3f;
@@ -48,30 +47,26 @@ public class CarController : NetworkBehaviour
 
     [Tooltip("Délai max entre un pump et la mort pour créditer le kill (secondes).")]
     [SerializeField] private float _killCreditWindow = 6f;
-    
+
 #endregion Serialized Fields
-    
+
 #region Attributes
     private Rigidbody _rigidbody;
     private Collider _playerCollider;
     private bool _stopMaxSpeed;
-    
-    // Inputs reçus (sur le serveur) ou capturés localement (sur le owner) chaque FixedUpdate
+
     private float _verticalInput;
     private float _horizontalInput;
-    
-    // N'est mis à jour et utilisé que côté serveur, qui est seul à exécuter la physique
+
     private float _airPenaltyMemory = 1f;
-    
+
     private bool _canBeBump = true;
     private float _delayBeBump = .3f;
     private bool _canSpeed = true;
-    
+
     private bool _canDash = true;
     private Coroutine _dashCooldownRoutine;
 
-    // Miroir réseau de _canDash pour l'indicateur visuel (lecture seule côté affichage).
-    // La logique du dash et son cooldown restent inchangés et vivent uniquement côté serveur.
     private NetworkVariable<bool> _dashReady = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     private NetworkVariable<int> _killCount = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -79,17 +74,16 @@ public class CarController : NetworkBehaviour
     private float _lastBumpTime = -1000f;
     private Coroutine _carPainterRoutine;
 
-    // Coyote Time : temps restant pour sauter après avoir quitté le sol (serveur).
     private float _coyoteTimer;
-    
+
     private Coroutine _stopMaxSpeedRoutine;
-    
+
     private Camera _camera;
     private Renderer[] _teamRenderers;
-    
-    
+
+
     #endregion Attributes
-    
+
 #region Network Attribute & SerializedFields
     [SerializeField] private NetworkVariable<float> _testSerialize =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> _test =  new NetworkVariable<float>(100f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -114,7 +108,7 @@ public bool CanBeBump
         {
             _canBeBump = value;
             StartCoroutine(DelayCanBump());
-        } 
+        }
     }
 }
 
@@ -155,7 +149,7 @@ public int KillCount => _killCount.Value;
     private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
-        
+
     }
 
     public override void OnNetworkSpawn()
@@ -178,13 +172,10 @@ public int KillCount => _killCount.Value;
         _dashReady.OnValueChanged += OnDashReadyChanged;
         UpdateDashIndicator(_dashReady.Value);
 
-        // Filet de sécurité : seul le serveur simule la physique (Rigidbody non-kinematic).
-        // NetworkRigidbody gère normalement déjà ce switch automatiquement selon l'autorité,
-        // cette ligne garantit juste le bon état dès le premier frame.
         Rigidbody.isKinematic = !IsServer;
-        
+
         GameManager.Instance.PlayersController.Add(new NetworkObjectReference(this.NetworkObject));
-        
+
         base.OnNetworkSpawn();
     }
 
@@ -200,8 +191,6 @@ public int KillCount => _killCount.Value;
     {
         if (!_playable) return;
 
-        // Le owner capture ses inputs de déplacement à chaque tick physique et les envoie au serveur.
-        // Si le owner EST le serveur (host), on évite l'aller-retour réseau inutile.
         if (IsOwner)
         {
             float vertical = Input.GetAxis("Vertical");
@@ -218,7 +207,6 @@ public int KillCount => _killCount.Value;
             }
         }
 
-        // Seul le serveur exécute la simulation (gravité, déplacement, rotation).
         if (!IsServer) return;
 
         if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
@@ -242,15 +230,12 @@ public int KillCount => _killCount.Value;
     {
         if (!_playable || !IsOwner) return;
 
-        // Saut : action ponctuelle, envoyée au serveur qui valide et applique la force.
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (IsServer) TryJump();
             else RequestJumpServerRpc();
         }
 
-        // Dash : on envoie l'INTENTION (avant/arrière/gauche/droite), pas un vecteur calculé
-        // localement, pour que ce soit le serveur qui fasse foi sur l'orientation de la voiture.
         EDashDirection dashDirection = EDashDirection.NONE;
 
         if (Input.GetKey(KeyCode.UpArrow))
@@ -267,7 +252,7 @@ public int KillCount => _killCount.Value;
             if (IsServer) ExecuteDash(dashDirection);
             else RequestDashServerRpc(dashDirection);
         }
-        
+
         if (Input.GetKeyDown(KeyCode.T))
             DebugSwitchTeam();
     }
@@ -279,10 +264,8 @@ public int KillCount => _killCount.Value;
     {
         float steerInput = _horizontalInput;
 
-        // Rotation proportionnelle à la vitesse, plafonnée
         float speedFactor = Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / MaxSpeed);
 
-        // Courbe : tourne bien dès le départ, légèrement moins vite à haute vitesse
         float rotationFactor = Mathf.Lerp(0.5f, 1f, speedFactor);
 
         float rotationAmount = steerInput * _steerAngle * rotationFactor * Time.fixedDeltaTime * 60f;
@@ -297,11 +280,9 @@ public int KillCount => _killCount.Value;
     {
         if (_canSpeed)
         {
-            // Accélération
             Vector3 acceleration = transform.forward * _moveSpeed * _verticalInput * Time.fixedDeltaTime;
             Rigidbody.AddForce(acceleration, ForceMode.VelocityChange);
 
-            // Limitation vitesse (horizontal uniquement)
             Vector3 flatVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             if (flatVelocity.magnitude > MaxSpeed)
             {
@@ -309,7 +290,6 @@ public int KillCount => _killCount.Value;
                 Rigidbody.linearVelocity = new Vector3(capped.x, Rigidbody.linearVelocity.y, capped.z);
             }
 
-            // Traction
             flatVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             float tractionForce = 1f - Mathf.Clamp01(_traction * Time.fixedDeltaTime * 10f);
             Vector3 forward = transform.forward * Vector3.Dot(flatVelocity, transform.forward);
@@ -318,7 +298,6 @@ public int KillCount => _killCount.Value;
             Rigidbody.linearVelocity = new Vector3(tractedVelocity.x, Rigidbody.linearVelocity.y, tractedVelocity.z);
         }
 
-        // Drag
         Vector3 draggedVelocity = new Vector3(
             Rigidbody.linearVelocity.x * _drag,
             Rigidbody.linearVelocity.y,
@@ -327,7 +306,6 @@ public int KillCount => _killCount.Value;
         Rigidbody.linearVelocity = draggedVelocity;
     }
 
-    // Exécutée uniquement côté serveur (appelée directement si host, via RPC sinon)
     private void TryJump()
     {
         bool grounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
@@ -335,7 +313,6 @@ public int KillCount => _killCount.Value;
 
         if (canJump)
         {
-            // Saut consommé : pas de deuxième saut via le Coyote Time.
             _coyoteTimer = 0f;
             Rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         }
@@ -364,11 +341,10 @@ public int KillCount => _killCount.Value;
 
         Rigidbody.linearVelocity = new Vector3(
             dashVelocity.x,
-            Rigidbody.linearVelocity.y, 
+            Rigidbody.linearVelocity.y,
             dashVelocity.z
         );
 
-        // Démarrage du cooldown
         _canDash = false;
         _dashReady.Value = false;
         UpdateDashIndicator(false);
@@ -376,7 +352,7 @@ public int KillCount => _killCount.Value;
             StopCoroutine(_dashCooldownRoutine);
         _dashCooldownRoutine = StartCoroutine(DashCooldownRoutine());
     }
-    
+
 
     #endregion Methodes
 
@@ -393,7 +369,6 @@ public int KillCount => _killCount.Value;
             _dashIndicator.SetAvailable(ready);
     }
 
-    // Un bump ("pump") réussi sur un joueur rend instantanément le dash.
     public void NotifyPlayerBump()
     {
         if (IsServer)
@@ -421,7 +396,6 @@ public int KillCount => _killCount.Value;
 
 #region Kill Reward
 
-    // Mémorise qui a pumpé ce véhicule (serveur : lu à la mort pour créditer le kill).
     public void RegisterBumpFrom(CarController bumper)
     {
         if (bumper == null || bumper == this)
@@ -433,7 +407,6 @@ public int KillCount => _killCount.Value;
         _lastBumpTime = Time.time;
     }
 
-    // Dernier percuteur récent, jamais soi-même. Serveur uniquement.
     public CarController GetKillCreditor()
     {
         if (!IsServer)
@@ -454,7 +427,6 @@ public int KillCount => _killCount.Value;
         return _lastBumper;
     }
 
-    // Crédite un kill. Retourne true au 3e kill (compteur remis à 0). Serveur uniquement.
     public bool RegisterKill()
     {
         if (!IsServer)
@@ -474,7 +446,6 @@ public int KillCount => _killCount.Value;
         return false;
     }
 
-    // Transforme la voiture en painter d'équipe pendant une durée. Serveur uniquement.
     public void EnableCarPainter(float duration, ETeam team)
     {
         if (!IsServer)
@@ -548,7 +519,6 @@ public int KillCount => _killCount.Value;
         _horizontalInput = horizontal;
     }
 
-    // Action ponctuelle -> RPC fiable (par défaut) pour ne surtout pas perdre l'événement.
     [Rpc(SendTo.Server)]
     private void RequestJumpServerRpc()
     {
@@ -598,7 +568,7 @@ public int KillCount => _killCount.Value;
         yield return new WaitForSeconds(_delayBeBump);
         _canBeBump = true;
     }
-    
+
     private IEnumerator DashCooldownRoutine()
     {
         yield return new WaitForSeconds(_dashCooldown);
@@ -617,7 +587,7 @@ private void DebugSwitchTeam()
         MyTeam = ETeam.RED;
     else if (MyTeam == ETeam.RED)
         MyTeam = ETeam.BLUE;
-    else 
+    else
         MyTeam = ETeam.RED;
 }
 

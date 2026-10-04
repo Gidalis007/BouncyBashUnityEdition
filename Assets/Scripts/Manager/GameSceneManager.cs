@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class GameSceneManager : NetworkBehaviour
 {
-    
-    
+
+
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ChangeSceneRpc(string sceneName)
     {
-        
+
         if (!IsServer)
         {
             return;
@@ -25,7 +25,6 @@ public class GameSceneManager : NetworkBehaviour
         StartCoroutine(LoadSceneAfterFade(sceneName));
     }
 
-    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
     private IEnumerator LoadSceneAfterFade(string sceneName)
     {
         yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);
@@ -47,5 +46,5 @@ public class GameSceneManager : NetworkBehaviour
         SceneTransition.EnsureExists();
         SceneTransition.Instance.FadeOut();
     }
-    
+
 }

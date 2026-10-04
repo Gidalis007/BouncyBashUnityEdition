@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// Fondu de transition entre scènes. Singleton persistant (créé à la demande,
-// survit aux changements de scène). L'overlay est construit en code car il ne
-// peut appartenir à aucune scène. Appelé à chaque changement de scène.
 public class SceneTransition : MonoBehaviour
 {
     #region Serialized Fields
@@ -63,7 +60,6 @@ public class SceneTransition : MonoBehaviour
 
     #region Methods
 
-    // Idempotent : crée le singleton s'il n'existe pas encore.
     public static void EnsureExists()
     {
         if (_instance != null)
@@ -129,7 +125,6 @@ public class SceneTransition : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Retour de fondu uniquement si on arrive masqué (évite un flash noir au boot).
         if (_fadeImage != null && _fadeImage.color.a > 0.01f)
         {
             FadeIn();

@@ -6,29 +6,29 @@ public class PainterController : NetworkBehaviour
 {
 
     #region SerializedFields
-    
+
     [SerializeField] private NetworkVariable<ETeam> _team = new NetworkVariable<ETeam>(ETeam.BLUE,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    
+
     [Space]
     [Tooltip("Rayon du pinceau mètres")]
     [SerializeField] private float _brushRadius = 0.5f;
 
     [Tooltip("Intervalle minimum (en secondes) entre deux peintures, pour éviter de surcharger le CPU.")]
     [SerializeField] private float _paintInterval = 0.05f;
-    
+
     #endregion SerializedFields
-    
+
     #region Attributes
-    
+
     private Rigidbody _rb;
     private float _paintTimer;
 
     #endregion Attributes
-    
+
     #region Properties
-   
+
     public Rigidbody Rigidbody => _rb;
-    
+
     #endregion Properties
 
     #region Mono
@@ -39,30 +39,26 @@ public class PainterController : NetworkBehaviour
 
     private void Update()
     {
-        //HandleMovementInput();
         _paintTimer += Time.deltaTime;
     }
-    
+
     private void OnCollisionStay(Collision collision)
     {
         TryPaint(collision.collider);
     }
-    
+
     private void OnTriggerStay(Collider other)
     {
         TryPaint(other);
     }
-    
+
     #endregion Mono
-    
+
     #region Methods
 
     protected virtual ETeam PaintTeam => _team.Value;
     protected virtual bool CanPaint => true;
 
-    // Peinture d'autorité serveur : seul le serveur peint, puis diffuse le coup
-    // à tous les pairs (sinon chacun peint sa copie locale et ça diverge).
-    // La bille garde false : comportement local inchangé.
     protected virtual bool ServerAuthoritative => false;
 
     private void TryPaint(Collider other)
@@ -72,7 +68,6 @@ public class PainterController : NetworkBehaviour
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        // Hors serveur, la peinture autoritaire ne s'applique que via BroadcastStrokeRpc.
         if (ServerAuthoritative && !IsServer) return;
 
         bool changed = platform.Paint(transform.position, PaintTeam, _brushRadius);
@@ -89,14 +84,13 @@ public class PainterController : NetworkBehaviour
         OnPlayerTouched(collision);
     }
 
-    // La bille change de propriétaire quand elle touche un joueur.
     protected virtual void OnPlayerTouched(Collision collision)
     {
 
         if (collision.gameObject.CompareTag("Player") && collision.gameObject.TryGetComponent(out NetworkObject networkObject))
             ChangeOwnerRpc(networkObject.OwnerClientId);
     }
-    
+
     #endregion Methods
 
     #region Rpc
@@ -106,8 +100,6 @@ public class PainterController : NetworkBehaviour
         GetComponent<NetworkObject>().ChangeOwnership(ownerClientId);
     }
 
-    // Diffuse un coup de pinceau d'autorité serveur (réappliqué localement partout).
-    // Paint() ignore les plateformes hors zone, et réappliquer le même coup est sans effet.
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
     private void BroadcastStrokeRpc(Vector3 worldPosition, ETeam team, float radius)
     {
@@ -119,7 +111,7 @@ public class PainterController : NetworkBehaviour
             }
         }
     }
-        
+
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ChangeTeamRpc(ETeam team)

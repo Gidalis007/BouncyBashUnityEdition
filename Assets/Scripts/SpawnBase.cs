@@ -49,7 +49,6 @@ public class SpawnBase : NetworkBehaviour
             playerSpawn = GameObject.FindGameObjectWithTag("SpawnTwo");
             player.transform.position = playerSpawn.transform.position;
             player.transform.rotation = playerSpawn.transform.rotation;
-          //  Destroy(gameObject);
         }
     }
 

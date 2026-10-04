@@ -42,7 +42,7 @@ public class LobbyManager : NetworkBehaviour
             StartGameRpc("GameScene");
         }
     }
-    private void Awake() // Makes it a singleton
+    private void Awake()
     {
         if (_instance == null)
             _instance = this;
@@ -95,7 +95,6 @@ public class LobbyManager : NetworkBehaviour
         StartCoroutine(LoadSceneAfterFade(sceneName));
     }
 
-    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
     private IEnumerator LoadSceneAfterFade(string sceneName)
     {
         yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);
@@ -117,6 +116,6 @@ public class LobbyManager : NetworkBehaviour
         SceneTransition.EnsureExists();
         SceneTransition.Instance.FadeOut();
     }
-    
+
     #endregion Methods
 }

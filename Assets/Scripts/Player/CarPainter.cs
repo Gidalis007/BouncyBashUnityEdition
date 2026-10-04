@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// Récompense de kills : la voiture peint au contact pendant une durée (voir CarController).
-// Hérite toute la logique de peinture de PainterController (même rythme, même rayon).
 public class CarPainter : PainterController
 {
     #region Attributes
@@ -23,10 +21,8 @@ public class CarPainter : PainterController
     protected override ETeam PaintTeam => _paintTeam;
     protected override bool CanPaint => _painting;
 
-    // La voiture peint côté serveur uniquement, pour que tous voient ses coups.
     protected override bool ServerAuthoritative => true;
 
-    // Pas de transfert d'ownership pour la voiture (comportement réservé à la bille).
     protected override void OnPlayerTouched(Collision collision)
     {
     }

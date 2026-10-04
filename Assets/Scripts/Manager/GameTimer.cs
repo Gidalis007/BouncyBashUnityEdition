@@ -21,7 +21,6 @@ public class GameTimer : NetworkBehaviour
     private GameObject _canvas;
     private TextMeshProUGUI _timerText;
 
-    // Même objet en scène : arbitre du gagnant à la fin du chrono.
     private ScoreManager _scoreManager;
     private float _elapsed;
     private int _lastBroadcastSecond = -1;
@@ -70,7 +69,6 @@ public class GameTimer : NetworkBehaviour
 
     #region Methods
 
-    // Seul le serveur fait avancer le chrono ; l'affichage est répliqué via _remainingTime.
     private void TickServer()
     {
         if (_timeUp)
@@ -93,7 +91,6 @@ public class GameTimer : NetworkBehaviour
         {
             _timeUp = true;
 
-            // Fin du chrono : l'équipe avec le plus de terrain gagne.
             if (_scoreManager != null)
             {
                 _scoreManager.DeclareWinner(_scoreManager.GetLeadingTeam());
@@ -173,7 +170,6 @@ public class GameTimer : NetworkBehaviour
         }
     }
 
-    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
     private IEnumerator LoadSceneAfterFade()
     {
         yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);

@@ -32,8 +32,6 @@ public class GameManager : NetworkBehaviour
         set => _playersController = value;
     }
 
-    // Gagnant du dernier match (renseigné côté serveur, voir ScoreManager).
-    // Non répliqué : les pairs lisent ScoreManager.MatchWinner, synchronisé par RPC.
     public ETeam WinnerTeam { get; set; } = ETeam.NONE;
 
     #endregion Properties
@@ -42,27 +40,19 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
-        /*for (int i = 0; i < _playersController.Count; i++)
-        {
-            _playersController[i].TryGet(out NetworkObject player);
-            if (player.GetComponent<NetworkBehaviour>().IsServer)
-            {
-                Debug.Log("PlayersController Count: " + _playersController.Count);
-            }
-        }*/
     }
-    private void Awake() // Makes it a singleton
+    private void Awake()
     {
         if (_instance == null)
             _instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    
+
 
     #endregion Mono
 
     #region Methods
-    
-    
+
+
     #endregion Methods
 }

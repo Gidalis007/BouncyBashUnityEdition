@@ -123,7 +123,6 @@ public class PlatformController : NetworkBehaviour
 
     private Vector2 WorldToUV(Vector3 worldPosition)
     {
-        // working only to not turn object
         Bounds bounds = _renderer.bounds;
         float u = (worldPosition.x - bounds.min.x) / bounds.size.x;
         float v = (worldPosition.z - bounds.min.z) / bounds.size.z;
@@ -159,8 +158,6 @@ public class PlatformController : NetworkBehaviour
         return _teamPixelCount.TryGetValue(team, out int count) ? count : 0;
     }
 
-    // Début de partie : moitié gauche (u < 0.5) rouge, moitié droite bleue.
-    // Local uniquement : appelé sur chaque pair via RPC (voir ScoreManager).
     public void InitHalfSplit()
     {
         if (_pixelTeams == null || _paintTexture == null) return;
@@ -205,7 +202,7 @@ public class PlatformController : NetworkBehaviour
     public bool Paint(Vector3 worldPosition, ETeam team, float brushRadiusWorld)
     {
         Vector2 uv = WorldToUV(worldPosition);
-        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return false; // en dehors de la plateforme
+        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f) return false;
 
         int centerX = Mathf.RoundToInt(uv.x * (_textureResolution - 1));
         int centerY = Mathf.RoundToInt(uv.y * (_textureResolution - 1));
@@ -219,7 +216,7 @@ public class PlatformController : NetworkBehaviour
         {
             for (int x = -pixelRadius; x <= pixelRadius; x++)
             {
-                if (x * x + y * y > pixelRadius * pixelRadius) continue; // forme circulaire
+                if (x * x + y * y > pixelRadius * pixelRadius) continue;
 
                 int px = centerX + x;
                 int py = centerY + y;

@@ -11,13 +11,13 @@ public class ForwardColliderController : NetworkBehaviour
     [SerializeField] private float _bumpForce = 1.2f;
     [SerializeField] private float _minPushForce = 5f;
     [SerializeField] private float _maxPushSecond = 0.1f;
-    
+
     [Header("Jump")]
     [SerializeField] private float _jumpBumpForce = 5f;
     [SerializeField] private float _minJumpPush = 2f;
     [SerializeField] private float _maxJumpPush = 15f;
 
-    
+
     [Header("Push")]
     [SerializeField] private string[] _pushableTags = { "Brush", "Player" };
 
@@ -79,7 +79,6 @@ public class ForwardColliderController : NetworkBehaviour
             horizontalPush = pushDirection * _minPushForce;
         }
 
-        // Poussée verticale bornée entre min et max
         float verticalPush = Mathf.Clamp(
             impactSpeed * _jumpBumpForce,
             _minJumpPush,
@@ -91,19 +90,15 @@ public class ForwardColliderController : NetworkBehaviour
 
         PainterController painter = bump.GetComponent<PainterController>();
 
-        // La bille seule change de team au pump (la voiture porte aussi un
-        // PainterController via CarPainter, à exclure ici).
         if (painter != null && painter is not CarPainter)
         {
             painter.ChangeTeamRpc(_myCarController.MyTeam);
         }
 
-        // Un "pump" réussi sur un joueur rend instantanément le dash au percuteur.
         if (bump.CompareTag("Player"))
         {
             _myCarController.NotifyPlayerBump();
 
-            // InParent : le trigger peut toucher un enfant visuel de la victime.
             CarController victimCar = bump.GetComponentInParent<CarController>();
 
             if (victimCar != null)
@@ -118,8 +113,8 @@ public class ForwardColliderController : NetworkBehaviour
         yield return new WaitForSeconds(_maxPushSecond);
         _canPush = true;
     }
-    
+
 
     #endregion Methods
-    
+
 }

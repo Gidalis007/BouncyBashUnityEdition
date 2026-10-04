@@ -17,12 +17,12 @@ public class RickRollManager : NetworkBehaviour
 
     #region Properties
     public static RickRollManager Instance { get => _instance; }
-    
+
 
     #endregion Properties
 
     #region Mono
-    private void Awake() // Makes it a singleton
+    private void Awake()
     {
         if (_instance == null)
             _instance = this;

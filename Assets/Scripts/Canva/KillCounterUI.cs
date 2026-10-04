@@ -2,7 +2,6 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-// HUD local : affiche les kills de la voiture possédée (progression vers la récompense painter).
 public class KillCounterUI : MonoBehaviour
 {
     #region Serialized Fields

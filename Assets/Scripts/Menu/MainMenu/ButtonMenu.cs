@@ -12,14 +12,12 @@ public class ButtonMenu : MonoBehaviour
     [SerializeField] private GameObject _menu;
     private void OnMouseEnter()
     {
-        //Debug.Log("mouseenter");
-        _spotLight.SetActive(true); 
+        _spotLight.SetActive(true);
 
     }
 
     private void OnMouseExit()
     {
-     //   Debug.Log("mouseexit");
         _spotLight.SetActive(false);
 
     }
@@ -34,14 +32,13 @@ public class ButtonMenu : MonoBehaviour
        _camera.Prioritize();
        ActiveMenu(true);
     }
-    
+
     private void ActiveMenu(bool active)
     {
-        // rendre tous ça plus smooth avec des anim d'arrive et de partie
-        
+
         _mainMenu.SetActive(!active);
         _menu.SetActive(active);
     }
-    
-    
+
+
 }

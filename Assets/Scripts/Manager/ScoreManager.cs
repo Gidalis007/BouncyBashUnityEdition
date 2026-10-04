@@ -33,8 +33,6 @@ public class ScoreManager : NetworkBehaviour
 
     #region Properties
 
-    // Gagnant du match en cours, répliqué vers tous les pairs avant le changement de scène.
-    // Statique : survit au chargement de la WinScene sur chaque pair.
     public static ETeam MatchWinner { get; private set; } = ETeam.NONE;
 
     public float RedPercent => _redPercent.Value;
@@ -85,7 +83,6 @@ public class ScoreManager : NetworkBehaviour
 
     #region Methods
 
-    // Retourne l'équipe en tête. Égalité -> RED (déterministe).
     public ETeam GetLeadingTeam()
     {
         return _redPercent.Value >= _bluePercent.Value ? ETeam.RED : ETeam.BLUE;
@@ -116,7 +113,6 @@ public class ScoreManager : NetworkBehaviour
         StartCoroutine(LoadSceneAfterFade());
     }
 
-    // Seul le serveur lit l'état réel des plateformes (seul à simuler la physique).
     private void ComputeAndBroadcast()
     {
         PlatformController[] platforms = FindObjectsByType<PlatformController>();
@@ -192,7 +188,6 @@ public class ScoreManager : NetworkBehaviour
         }
     }
 
-    // Attend la fin du fondu (tous les pairs) avant de charger, côté serveur.
     private IEnumerator LoadSceneAfterFade()
     {
         yield return new WaitForSeconds(SceneTransition.Instance.FadeDuration);
@@ -230,7 +225,6 @@ public class ScoreManager : NetworkBehaviour
         SceneTransition.Instance.FadeOut();
     }
 
-    // Début de partie : la moitié du terrain en rouge, l'autre en bleu, sur tous les pairs.
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
     private void InitTerrainRpc()
     {

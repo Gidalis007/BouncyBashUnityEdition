@@ -10,6 +10,6 @@ public class GameLoader : MonoBehaviour
     {
         if (_shouldLoadScene)
             SceneManager.LoadScene(_sceneName);
-            
+
     }
 }

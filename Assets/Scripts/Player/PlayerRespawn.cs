@@ -14,7 +14,7 @@ public class PlayerRespawn : NetworkBehaviour
     private TextMeshProUGUI _timerText;
     private Camera _playerCamera;
     private Camera _spectatorCamera;
-    
+
     private Rigidbody _rb;
     private Vector3 _ogLocation;
     private Quaternion _ogRotation;
@@ -26,13 +26,11 @@ public class PlayerRespawn : NetworkBehaviour
     [Tooltip("Durée du mode painter offert au tueur au respawn de sa 3e victime.")]
     [SerializeField] private float _painterRewardDuration = 5f;
     private CarController _pendingPainterKiller;
-    
-    // Timer "physique" : n'existe et n'agit que côté serveur (repositionnement du Rigidbody, comme CarController)
+
     private float _timer = -1f;
-    
-    // Timer "visuel" : copie locale utilisée uniquement par le owner pour l'affichage du texte
+
     private float _uiTimer = -1f;
-    
+
     public override void OnNetworkSpawn()
     {
         _rb = GetComponent<Rigidbody>();
@@ -48,31 +46,23 @@ public class PlayerRespawn : NetworkBehaviour
 
     private void Update()
     {
-        // Seul le serveur a l'autorité sur le Rigidbody désormais -> seul lui fait le vrai repositionnement
         if (IsServer)
             TimerRespawn();
 
-        // Le owner gère en parallèle sa propre copie du timer, uniquement pour l'affichage
         if (IsOwner)
         {
             TimerUI();
 
-            // Rattrapage lobby : la SpectateCam de scène (depth supérieure) peut apparaître
-            // après le spawn réseau et couvrir la caméra joueur. Tant qu'on n'attend pas
-            // de respawn, on force la caméra joueur chez l'owner.
             if (!_isWaitingRespawn)
                 EnsurePlayerCamera();
         }
     }
 
 
-    // A appeler côté serveur (ex: détection de chute faite côté serveur, seul fiable niveau physique maintenant)
     public void Respawn(float time)
     {
         if (!IsServer) return;
 
-        // Attribution du kill au dernier percuteur récent. Au 3e kill, le tueur
-        // deviendra painter à la réapparition de cette victime.
         CarController victimCar = GetComponent<CarController>();
 
         if (victimCar != null)
@@ -87,30 +77,28 @@ public class PlayerRespawn : NetworkBehaviour
 
         _timer = time;
         EnablePlayerRpc(false);
-        
+
         ShowTimerRpc(time);
     }
 
     private void TimerRespawn()
     {
         if (_timer <= -1f) return;
-        
+
         if (_timer <= 0)
         {
             _timer = -1;
-            
+
             _rb.linearVelocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
-        
+
             GetRespawnPoint(out Vector3 respawnPosition, out Quaternion respawnRotation);
             _rb.position = respawnPosition;
             _rb.rotation = respawnRotation;
-            
+
             EnablePlayerRpc(true);
             HideTimerRpc();
 
-            // Réapparition : si cette mort était le 3e kill du tueur, sa voiture
-            // devient painter de sa couleur pendant quelques secondes.
             if (_pendingPainterKiller != null)
             {
                 CarController killer = _pendingPainterKiller;
@@ -121,14 +109,13 @@ public class PlayerRespawn : NetworkBehaviour
                     killer.EnableCarPainter(_painterRewardDuration, killer.MyTeam);
                 }
             }
-            
+
             return;
         }
 
         _timer -= Time.deltaTime;
     }
 
-    // Purement visuel, exécuté uniquement chez le owner
     private void TimerUI()
     {
         if (_uiTimer <= -1f) return;
@@ -214,7 +201,7 @@ public class PlayerRespawn : NetworkBehaviour
 
         return _spawnTwoTag;
     }
-    
+
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
     private void EnablePlayerRpc(bool enable)
     {
@@ -227,12 +214,11 @@ public class PlayerRespawn : NetworkBehaviour
             EnableSpectatorCamera(false);
     }
 
-    // Instancie le canvas de timer chez le owner uniquement (affichage local)
     [Rpc(SendTo.Owner)]
     private void ShowTimerRpc(float time)
     {
         _canvas = Instantiate(_canvasPrefab, Vector3.zero, Quaternion.identity, transform);
-        
+
         foreach (var text in _canvas.GetComponentsInChildren<TextMeshProUGUI>())
         {
             if (text.CompareTag("Timer"))

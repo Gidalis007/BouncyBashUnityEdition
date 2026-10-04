@@ -20,7 +20,7 @@ public class ObjectRespawn : MonoBehaviour
     {
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
-        
+
         _rb.position = _ogLocation;
         _rb.rotation = _ogRotation;
     }

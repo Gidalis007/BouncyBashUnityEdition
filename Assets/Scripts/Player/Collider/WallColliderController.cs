@@ -20,16 +20,16 @@ public class WallColliderController : MonoBehaviour
     [Tooltip("Distance dont l'objet est repoussé hors du mur à chaque frame de contact (0 = désactivé)")]
     [SerializeField] private float _pushForce = 2f;
     #endregion SerializeFields
-    
+
     #region Attributes
     private Rigidbody _rigidbody;
     #endregion Attributes
-    
+
     #region Properties
     #endregion Properties
 
     #region Mono
-    
+
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -47,31 +47,29 @@ public class WallColliderController : MonoBehaviour
         _rigidbody.AddForce(normal * _pushForce, ForceMode.Force);
     }
     #endregion Mono
-    
+
     #region Methods
 
     private void Bounce(Collision collision)
     {
         if (!IsWall(collision.gameObject)) return;
-        
+
         Vector3 normal = collision.contacts[0].normal;
         Vector3 incomingVelocity = _rigidbody.linearVelocity;
         Vector3 reflected = Vector3.Reflect(incomingVelocity, normal) * _bounciness;
-        
 
-        // minimum speed
+
         if (reflected.magnitude < _minBounceSpeed)
         {
             Vector3 direction = reflected.magnitude > 0.01f ? reflected.normalized : normal;
             reflected = direction * _minBounceSpeed;
         }
-        
-        // maximum speed
+
         reflected = Vector3.ClampMagnitude(reflected, _maxBounceSpeed);
 
         _rigidbody.linearVelocity = reflected;
     }
-    
+
     private bool IsWall(GameObject obj)
     {
         for (int i = 0; i < _wallTags.Length; i++)
@@ -80,6 +78,6 @@ public class WallColliderController : MonoBehaviour
         }
         return false;
     }
-    
+
     #endregion Methods
 }

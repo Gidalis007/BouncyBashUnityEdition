@@ -6,21 +6,21 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     #region SerializeField
-    
+
     [SerializeField] private CinemachineCamera _mainCamera;
     [SerializeField] private GameObject _mainMenu;
-    
+
     #endregion SerializeField
-    
+
     #region Attributes
 
     #endregion Attributes
-    
+
     #region Mono
-    
-    
+
+
     #endregion Mono
-    
+
     #region Methodes
 
     #region Private
@@ -31,14 +31,14 @@ public class MainMenu : MonoBehaviour
     }
 
     #endregion Private
-    
+
     #region Public
 
     public void QuitGame()
     {
         Application.Quit();
     }
-    
+
     public void ReturnBack(GameObject menu)
     {
         _mainCamera.Prioritize();

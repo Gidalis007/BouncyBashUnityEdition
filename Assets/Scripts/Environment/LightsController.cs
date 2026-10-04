@@ -9,7 +9,7 @@ using Unity.Services.Lobbies.Models;
 public class LightsController : MonoBehaviour
 {
     #region serializedFields
-    
+
     [Header("Lights")]
     [SerializeField] private Light[] _pulsingLights;
 
@@ -23,22 +23,22 @@ public class LightsController : MonoBehaviour
     [Header("Colors")]
     [SerializeField] private Color[] _colors;
 
-    
+
     #endregion serializedFields
-    
+
     #region Attributes
-    
+
     private Light[] _lights;
     private bool _pulsingLightsActive = true;
     private float _timer = 0f;
     private static LightsController _instance = null;
     #endregion Attributes
-    
+
     #region Properties
-    
+
     public static LightsController Instance { get => _instance; }
     #endregion Properties
-    
+
     #region Mono
 
     private void Awake()
@@ -60,7 +60,7 @@ public class LightsController : MonoBehaviour
     {
         if (_timer < _delay)
         {
-            _timer += Time.deltaTime; 
+            _timer += Time.deltaTime;
         }
         else
         {
@@ -70,7 +70,7 @@ public class LightsController : MonoBehaviour
     }
 
     #endregion Mono
-    
+
     #region Methodes
 
     #region Private
@@ -85,9 +85,9 @@ public class LightsController : MonoBehaviour
             _pulsingLights[i].color = _colors[Random.Range(0, _colors.Length)];
         }
     }
-    
+
     #endregion Private
-    
+
     #region Public
 
     public void TogglePulsingLights()
@@ -98,9 +98,9 @@ public class LightsController : MonoBehaviour
             _pulsingLights[i].intensity = 0;
         }
     }
-    
+
     #endregion Public
-    
+
     #endregion Methodes
-    
+
 }
