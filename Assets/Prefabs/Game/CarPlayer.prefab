@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 3852629681438306509}
   - component: {fileID: 1452314082203172640}
   - component: {fileID: 6068520253656590755}
+  - component: {fileID: 6068520253656590756}
   - component: {fileID: 265221868910894722}
   - component: {fileID: 1196449026629467991}
   m_Layer: 6
@@ -413,11 +414,26 @@ MonoBehaviour:
   _airPenality: 1.5
   _extraGravity: 20
   _dashIndicator: {fileID: 102}
+  _carPainter: {fileID: 0}
+  _killCreditWindow: 6
   _testSerialize:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 100
+--- !u!114 &6068520253656590756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3497411153570532641}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894905bad6dc4b0c8fafd3805d292bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarPainter
+  _brushRadius: 1
 --- !u!114 &265221868910894722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +467,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _canvasPrefab: {fileID: 8933943839315055227, guid: a6226478c51871e698b2010b111a341f, type: 3}
   _renderer: {fileID: 6903066230170654645}
+  _painterRewardDuration: 5
 --- !u!1 &6532575715084912138
 GameObject:
   m_ObjectHideFlags: 0

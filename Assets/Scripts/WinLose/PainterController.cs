@@ -57,18 +57,27 @@ public class PainterController : NetworkBehaviour
     
     #region Methods
 
+    protected virtual ETeam PaintTeam => _team.Value;
+    protected virtual bool CanPaint => true;
+
     private void TryPaint(Collider other)
     {
-        if (_paintTimer < _paintInterval) return;
+        if (!CanPaint || _paintTimer < _paintInterval) return;
 
         PlatformController platform = other.GetComponent<PlatformController>();
         if (platform == null) return;
 
-        platform.Paint(transform.position, _team.Value, _brushRadius);
+        platform.Paint(transform.position, PaintTeam, _brushRadius);
         _paintTimer = 0f;
     }
 
     private void OnCollisionEnter(Collision collision)
+    {
+        OnPlayerTouched(collision);
+    }
+
+    // La bille change de propriétaire quand elle touche un joueur.
+    protected virtual void OnPlayerTouched(Collision collision)
     {
 
         if (collision.gameObject.CompareTag("Player") && collision.gameObject.TryGetComponent(out NetworkObject networkObject))

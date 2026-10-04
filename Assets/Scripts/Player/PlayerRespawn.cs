@@ -22,6 +22,10 @@ public class PlayerRespawn : NetworkBehaviour
     private const string _spawnOneTag = "SpawnOne";
     private const string _spawnTwoTag = "SpawnTwo";
     private bool _isWaitingRespawn = false;
+
+    [Tooltip("Durée du mode painter offert au tueur au respawn de sa 3e victime.")]
+    [SerializeField] private float _painterRewardDuration = 5f;
+    private CarController _pendingPainterKiller;
     
     // Timer "physique" : n'existe et n'agit que côté serveur (repositionnement du Rigidbody, comme CarController)
     private float _timer = -1f;
@@ -67,6 +71,20 @@ public class PlayerRespawn : NetworkBehaviour
     {
         if (!IsServer) return;
 
+        // Attribution du kill au dernier percuteur récent. Au 3e kill, le tueur
+        // deviendra painter à la réapparition de cette victime.
+        CarController victimCar = GetComponent<CarController>();
+
+        if (victimCar != null)
+        {
+            CarController killer = victimCar.GetKillCreditor();
+
+            if (killer != null && killer.RegisterKill())
+            {
+                _pendingPainterKiller = killer;
+            }
+        }
+
         _timer = time;
         EnablePlayerRpc(false);
         
@@ -90,6 +108,19 @@ public class PlayerRespawn : NetworkBehaviour
             
             EnablePlayerRpc(true);
             HideTimerRpc();
+
+            // Réapparition : si cette mort était le 3e kill du tueur, sa voiture
+            // devient painter de sa couleur pendant quelques secondes.
+            if (_pendingPainterKiller != null)
+            {
+                CarController killer = _pendingPainterKiller;
+                _pendingPainterKiller = null;
+
+                if (killer != null)
+                {
+                    killer.EnableCarPainter(_painterRewardDuration, killer.MyTeam);
+                }
+            }
             
             return;
         }

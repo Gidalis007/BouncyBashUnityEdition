@@ -39,6 +39,13 @@ public class CarController : NetworkBehaviour
     [Space]
     [Header("Dash Indicator")]
     [SerializeField] private DashIndicator _dashIndicator;
+
+    [Space]
+    [Header("Kill Reward")]
+    [SerializeField] private CarPainter _carPainter;
+
+    [Tooltip("Délai max entre un pump et la mort pour créditer le kill (secondes).")]
+    [SerializeField] private float _killCreditWindow = 6f;
     
 #endregion Serialized Fields
     
@@ -64,6 +71,11 @@ public class CarController : NetworkBehaviour
     // Miroir réseau de _canDash pour l'indicateur visuel (lecture seule côté affichage).
     // La logique du dash et son cooldown restent inchangés et vivent uniquement côté serveur.
     private NetworkVariable<bool> _dashReady = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    private NetworkVariable<int> _killCount = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private CarController _lastBumper;
+    private float _lastBumpTime = -1000f;
+    private Coroutine _carPainterRoutine;
     
     private Coroutine _stopMaxSpeedRoutine;
     
@@ -128,6 +140,8 @@ public bool IsDashReady
 {
     get => IsServer ? _canDash : _dashReady.Value;
 }
+
+public int KillCount => _killCount.Value;
 
 #endregion Properties
 
@@ -395,6 +409,100 @@ public bool IsDashReady
 
 #endregion Dash Indicator
 
+#region Kill Reward
+
+    // Mémorise qui a pumpé ce véhicule (serveur : lu à la mort pour créditer le kill).
+    public void RegisterBumpFrom(CarController bumper)
+    {
+        if (bumper == null || bumper == this)
+        {
+            return;
+        }
+
+        _lastBumper = bumper;
+        _lastBumpTime = Time.time;
+    }
+
+    // Dernier percuteur récent, jamais soi-même. Serveur uniquement.
+    public CarController GetKillCreditor()
+    {
+        if (!IsServer)
+        {
+            return null;
+        }
+
+        if (_lastBumper == null || _lastBumper == this)
+        {
+            return null;
+        }
+
+        if (Time.time - _lastBumpTime > _killCreditWindow)
+        {
+            return null;
+        }
+
+        return _lastBumper;
+    }
+
+    // Crédite un kill. Retourne true au 3e kill (compteur remis à 0). Serveur uniquement.
+    public bool RegisterKill()
+    {
+        if (!IsServer)
+        {
+            return false;
+        }
+
+        int next = _killCount.Value + 1;
+
+        if (next >= 3)
+        {
+            _killCount.Value = 0;
+            return true;
+        }
+
+        _killCount.Value = next;
+        return false;
+    }
+
+    // Transforme la voiture en painter d'équipe pendant une durée. Serveur uniquement.
+    public void EnableCarPainter(float duration, ETeam team)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        if (_carPainterRoutine != null)
+        {
+            StopCoroutine(_carPainterRoutine);
+        }
+
+        _carPainterRoutine = StartCoroutine(CarPainterRoutine(duration, team));
+    }
+
+    private IEnumerator CarPainterRoutine(float duration, ETeam team)
+    {
+        ApplyCarPainterLocal(true, team);
+        SetCarPainterRpc(true, team);
+
+        yield return new WaitForSeconds(duration);
+
+        ApplyCarPainterLocal(false, ETeam.NONE);
+        SetCarPainterRpc(false, ETeam.NONE);
+
+        _carPainterRoutine = null;
+    }
+
+    private void ApplyCarPainterLocal(bool painting, ETeam team)
+    {
+        if (_carPainter != null)
+        {
+            _carPainter.SetPainting(painting, team);
+        }
+    }
+
+#endregion Kill Reward
+
 #region Team
 
     private void OnTeamChanged(ETeam previousTeam, ETeam newTeam)
@@ -447,6 +555,12 @@ public bool IsDashReady
     private void RequestRestoreDashServerRpc()
     {
         RestoreDash();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetCarPainterRpc(bool painting, ETeam team)
+    {
+        ApplyCarPainterLocal(painting, team);
     }
 
 #endregion Network RPCs

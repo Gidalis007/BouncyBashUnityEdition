@@ -90,7 +90,10 @@ public class ForwardColliderController : NetworkBehaviour
         targetRb.AddForce(Vector3.up * verticalPush, ForceMode.VelocityChange);
 
         PainterController painter = bump.GetComponent<PainterController>();
-        if (painter)
+
+        // La bille seule change de team au pump (la voiture porte aussi un
+        // PainterController via CarPainter, à exclure ici).
+        if (painter != null && painter is not CarPainter)
         {
             painter.ChangeTeamRpc(_myCarController.MyTeam);
         }
@@ -99,6 +102,13 @@ public class ForwardColliderController : NetworkBehaviour
         if (bump.CompareTag("Player"))
         {
             _myCarController.NotifyPlayerBump();
+
+            CarController victimCar = bump.GetComponent<CarController>();
+
+            if (victimCar != null)
+            {
+                victimCar.RegisterBumpFrom(_myCarController);
+            }
         }
     }
 
