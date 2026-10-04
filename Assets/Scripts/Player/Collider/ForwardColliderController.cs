@@ -94,6 +94,12 @@ public class ForwardColliderController : NetworkBehaviour
         {
             painter.ChangeTeamRpc(_myCarController.MyTeam);
         }
+
+        // Un "pump" réussi sur un joueur rend instantanément le dash au percuteur.
+        if (bump.CompareTag("Player"))
+        {
+            _myCarController.NotifyPlayerBump();
+        }
     }
 
     private IEnumerator ResetPushCooldown()

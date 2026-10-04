@@ -369,6 +369,30 @@ public bool IsDashReady
             _dashIndicator.SetAvailable(ready);
     }
 
+    // Un bump ("pump") réussi sur un joueur rend instantanément le dash.
+    public void NotifyPlayerBump()
+    {
+        if (IsServer)
+            RestoreDash();
+        else
+            RequestRestoreDashServerRpc();
+    }
+
+    private void RestoreDash()
+    {
+        if (!IsServer || _canDash) return;
+
+        if (_dashCooldownRoutine != null)
+        {
+            StopCoroutine(_dashCooldownRoutine);
+            _dashCooldownRoutine = null;
+        }
+
+        _canDash = true;
+        _dashReady.Value = true;
+        UpdateDashIndicator(true);
+    }
+
 #endregion Dash Indicator
 
 #region Team
@@ -417,6 +441,12 @@ public bool IsDashReady
     private void RequestDashServerRpc(EDashDirection direction)
     {
         ExecuteDash(direction);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void RequestRestoreDashServerRpc()
+    {
+        RestoreDash();
     }
 
 #endregion Network RPCs
