@@ -7,7 +7,7 @@ public class ScoreManager : NetworkBehaviour
 {
     #region Serialized Fields
 
-    [SerializeField] private GameObject _scoreBarPrefab;
+    [SerializeField] private GameObject _redBlueBarPrefab;
     [SerializeField] private string _winSceneName = "WinScene";
 
     [Tooltip("Part du terrain (0-1) à atteindre pour gagner immédiatement.")]
@@ -24,7 +24,7 @@ public class ScoreManager : NetworkBehaviour
     private NetworkVariable<float> _redPercent = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private NetworkVariable<float> _bluePercent = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    private ScoreBarUI _scoreBar;
+    private RedBlueBar _redBlueBar;
     private GameObject _canvas;
     private float _refreshTimer;
     private bool _gameOver;
@@ -161,30 +161,30 @@ public class ScoreManager : NetworkBehaviour
 
     private void ShowBar()
     {
-        if (_scoreBarPrefab == null || _canvas != null)
+        if (_redBlueBarPrefab == null || _canvas != null)
         {
             return;
         }
 
-        _canvas = Instantiate(_scoreBarPrefab);
-        _scoreBar = _canvas.GetComponent<ScoreBarUI>();
+        _canvas = Instantiate(_redBlueBarPrefab);
+        _redBlueBar = _canvas.GetComponent<RedBlueBar>();
 
         UpdateBar();
     }
 
     private void UpdateBar()
     {
-        if (_scoreBar == null)
+        if (_redBlueBar == null)
         {
             return;
         }
 
-        _scoreBar.SetScores(_redPercent.Value, _bluePercent.Value);
+        _redBlueBar.SetPercentage(_redPercent.Value * 100f);
     }
 
     private void HideBar()
     {
-        _scoreBar = null;
+        _redBlueBar = null;
 
         if (_canvas != null)
         {

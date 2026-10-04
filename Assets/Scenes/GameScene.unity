@@ -4140,7 +4140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   ShowTopMostFoldoutHeaderGroup: 1
-  _scoreBarPrefab: {fileID: 770004001, guid: 2132cbdbdfe34c1ba7c0ad560979fb9e, type: 3}
+  _redBlueBarPrefab: {fileID: 770007001, guid: 08a84e7ce91a4039b284615d7a38093c, type: 3}
   _winSceneName: WinScene
   _winThreshold: 1
   _refreshInterval: 0.5
