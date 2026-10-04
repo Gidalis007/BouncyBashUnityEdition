@@ -10,6 +10,8 @@ public class LobbyManager : NetworkBehaviour
 {
     #region Attributes
     private static LobbyManager _instance = null;
+    [SerializeField] private GameObject _startText;
+    private const int _requiredPlayerCount = 2;
 
     #endregion Attributes
 
@@ -28,7 +30,14 @@ public class LobbyManager : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        UpdateStartText();
+
+        if (!IsServer)
+        {
+            return;
+        }
+
+        if (HasEnoughPlayers() && Input.GetKeyDown(KeyCode.E))
         {
             StartGameRpc("GameScene");
         }
@@ -37,7 +46,6 @@ public class LobbyManager : NetworkBehaviour
     {
         if (_instance == null)
             _instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
 
@@ -45,10 +53,39 @@ public class LobbyManager : NetworkBehaviour
 
     #region Methods
 
+    private bool HasEnoughPlayers()
+    {
+        if (GameManager.Instance == null)
+        {
+            return false;
+        }
+
+        return GameManager.Instance.PlayersController.Count >= _requiredPlayerCount;
+    }
+
+    private void UpdateStartText()
+    {
+        if (_startText == null)
+        {
+            return;
+        }
+
+        bool showText = IsServer && HasEnoughPlayers();
+        if (_startText.activeSelf != showText)
+        {
+            _startText.SetActive(showText);
+        }
+    }
+
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void StartGameRpc(string sceneName)
     {
         if (!IsServer)
+        {
+            return;
+        }
+
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == sceneName)
         {
             return;
         }

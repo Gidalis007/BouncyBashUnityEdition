@@ -50,7 +50,10 @@ public class MainMenu : MonoBehaviour
     {
         NetworkManager.Singleton.StartHost();
         transform.gameObject.SetActive(false);
-        SceneManager.LoadScene("SampleScene");
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            "SampleScene",
+            LoadSceneMode.Single
+        );
     }
 
     public void Client()

@@ -11,6 +11,7 @@ TagManager:
   - Timer
   - SpawnOne
   - SpawnTwo
+  - SpectateCam
   layers:
   - Default
   - TransparentFX

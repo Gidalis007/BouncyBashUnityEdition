@@ -14,6 +14,11 @@ public class GameSceneManager : NetworkBehaviour
             return;
         }
 
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == sceneName)
+        {
+            return;
+        }
+
         NetworkManager.Singleton.SceneManager.LoadScene(
             sceneName,
             LoadSceneMode.Single

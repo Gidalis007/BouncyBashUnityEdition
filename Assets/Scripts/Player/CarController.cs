@@ -60,6 +60,7 @@ public class CarController : NetworkBehaviour
     private Coroutine _stopMaxSpeedRoutine;
     
     private Camera _camera;
+    private Renderer[] _teamRenderers;
     
     
     #endregion Attributes
@@ -105,6 +106,16 @@ public ETeam MyTeam
     set => _myTeam.Value = value;
 }
 
+public bool IsTeamOne
+{
+    get => MyTeam == ETeam.RED;
+}
+
+public bool IsTeamTwo
+{
+    get => MyTeam == ETeam.BLUE;
+}
+
 #endregion Properties
 
 #region Mono
@@ -124,6 +135,14 @@ public ETeam MyTeam
             _camera.enabled = false;
         }
 
+        _teamRenderers = GetComponentsInChildren<Renderer>();
+
+        if (IsOwner)
+            MyTeam = OwnerClientId == 0 ? ETeam.RED : ETeam.BLUE;
+
+        _myTeam.OnValueChanged += OnTeamChanged;
+        ApplyTeamColor(MyTeam);
+
         // Filet de sécurité : seul le serveur simule la physique (Rigidbody non-kinematic).
         // NetworkRigidbody gère normalement déjà ce switch automatiquement selon l'autorité,
         // cette ligne garantit juste le bon état dès le premier frame.
@@ -132,6 +151,13 @@ public ETeam MyTeam
         GameManager.Instance.PlayersController.Add(new NetworkObjectReference(this.NetworkObject));
         
         base.OnNetworkSpawn();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _myTeam.OnValueChanged -= OnTeamChanged;
+
+        base.OnNetworkDespawn();
     }
 
     private void FixedUpdate()
@@ -310,6 +336,32 @@ public ETeam MyTeam
     
 
     #endregion Methodes
+
+#region Team
+
+    private void OnTeamChanged(ETeam previousTeam, ETeam newTeam)
+    {
+        ApplyTeamColor(newTeam);
+    }
+
+    private void ApplyTeamColor(ETeam team)
+    {
+        if (team != ETeam.RED && team != ETeam.BLUE)
+            return;
+
+        Color teamColor = team == ETeam.RED ? Color.red : Color.blue;
+
+        if (_teamRenderers == null)
+            return;
+
+        foreach (Renderer teamRenderer in _teamRenderers)
+        {
+            if (teamRenderer != null)
+                teamRenderer.material.color = teamColor;
+        }
+    }
+
+#endregion Team
 
 #region Network RPCs
 

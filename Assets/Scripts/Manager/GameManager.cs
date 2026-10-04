@@ -38,8 +38,6 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
-        if (NetworkManager.Singleton.IsServer) Debug.Log("Debug");
-        
         /*for (int i = 0; i < _playersController.Count; i++)
         {
             _playersController[i].TryGet(out NetworkObject player);
