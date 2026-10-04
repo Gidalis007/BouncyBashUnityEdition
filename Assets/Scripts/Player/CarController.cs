@@ -27,6 +27,8 @@ public class CarController : NetworkBehaviour
     [Space]
     [Header("Mouvement Special")]
     [SerializeField] private float _jumpForce = 5f;
+    // Fenêtre de tolérance pour sauter après avoir quitté le sol (secondes).
+    [SerializeField] private float _coyoteTime = 0.1f;
     [SerializeField] private float _dashForce = 30f;
     [SerializeField] private float _dashCooldown = 3f;
     [SerializeField] private float _airPenality = 20f;
@@ -76,6 +78,9 @@ public class CarController : NetworkBehaviour
     private CarController _lastBumper;
     private float _lastBumpTime = -1000f;
     private Coroutine _carPainterRoutine;
+
+    // Coyote Time : temps restant pour sauter après avoir quitté le sol (serveur).
+    private float _coyoteTimer;
     
     private Coroutine _stopMaxSpeedRoutine;
     
@@ -220,10 +225,12 @@ public int KillCount => _killCount.Value;
         {
             Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
             _airPenaltyMemory = _airPenality;
+            _coyoteTimer -= Time.fixedDeltaTime;
         }
         else
         {
             _airPenaltyMemory = 1f;
+            _coyoteTimer = _coyoteTime;
         }
 
         Move();
@@ -323,10 +330,13 @@ public int KillCount => _killCount.Value;
     // Exécutée uniquement côté serveur (appelée directement si host, via RPC sinon)
     private void TryJump()
     {
-        bool canJump = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        bool canJump = grounded || _coyoteTimer > 0f;
 
         if (canJump)
         {
+            // Saut consommé : pas de deuxième saut via le Coyote Time.
+            _coyoteTimer = 0f;
             Rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         }
     }
