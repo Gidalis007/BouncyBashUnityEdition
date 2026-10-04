@@ -59,6 +59,7 @@ public class PlatformController : NetworkBehaviour
 
     public ETeam CurrentOwner => _currentOwner.Value;
     public bool IsCaptured => _isCaptured;
+    public int TotalPixels => _totalPixels;
 
     #endregion Properties
 
@@ -150,6 +151,12 @@ public class PlatformController : NetworkBehaviour
     {
         if (_teamPixelCount == null) return 0f;
         return (float)_teamPixelCount[team] / _totalPixels;
+    }
+
+    public int GetTeamPixelCount(ETeam team)
+    {
+        if (_teamPixelCount == null) return 0;
+        return _teamPixelCount.TryGetValue(team, out int count) ? count : 0;
     }
 
     public Color GetColorForTeam(ETeam team)

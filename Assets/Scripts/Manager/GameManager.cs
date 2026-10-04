@@ -32,6 +32,10 @@ public class GameManager : NetworkBehaviour
         set => _playersController = value;
     }
 
+    // Gagnant du dernier match (renseigné côté serveur, voir ScoreManager).
+    // Non répliqué : les pairs lisent ScoreManager.MatchWinner, synchronisé par RPC.
+    public ETeam WinnerTeam { get; set; } = ETeam.NONE;
+
     #endregion Properties
 
     #region Mono

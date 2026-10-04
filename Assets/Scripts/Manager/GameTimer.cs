@@ -19,6 +19,9 @@ public class GameTimer : NetworkBehaviour
     private NetworkVariable<float> _remainingTime = new NetworkVariable<float>(180f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private GameObject _canvas;
     private TextMeshProUGUI _timerText;
+
+    // Même objet en scène : arbitre du gagnant à la fin du chrono.
+    private ScoreManager _scoreManager;
     private float _elapsed;
     private int _lastBroadcastSecond = -1;
     private int _lastShownSecond = -1;
@@ -39,6 +42,8 @@ public class GameTimer : NetworkBehaviour
         _lastBroadcastSecond = -1;
         _lastShownSecond = -1;
         _timeUp = false;
+
+        _scoreManager = GetComponent<ScoreManager>();
 
         ShowTimer();
     }
@@ -86,7 +91,16 @@ public class GameTimer : NetworkBehaviour
         if (remaining <= 0f)
         {
             _timeUp = true;
-            LoadWinScene();
+
+            // Fin du chrono : l'équipe avec le plus de terrain gagne.
+            if (_scoreManager != null)
+            {
+                _scoreManager.DeclareWinner(_scoreManager.GetLeadingTeam());
+            }
+            else
+            {
+                LoadWinScene();
+            }
         }
     }
 

@@ -6162,6 +6162,7 @@ GameObject:
   - component: {fileID: 1302560227}
   - component: {fileID: 1302560228}
   - component: {fileID: 1302560230}
+  - component: {fileID: 1302560231}
   m_Layer: 0
   m_Name: GameStartCountdown
   m_TagString: Untagged
@@ -6239,6 +6240,22 @@ MonoBehaviour:
   _gameDuration: 180
   _winSceneName: WinScene
   _timerCanvasPrefab: {fileID: 770002001, guid: 7f448ff7e4134852949a0a8626b0982f, type: 3}
+--- !u!114 &1302560231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302560226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d21562cf896b4c8bb4339ffe679d0926, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
+  _scoreBarPrefab: {fileID: 770004001, guid: 2132cbdbdfe34c1ba7c0ad560979fb9e, type: 3}
+  _winSceneName: WinScene
+  _winThreshold: 1
+  _refreshInterval: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
