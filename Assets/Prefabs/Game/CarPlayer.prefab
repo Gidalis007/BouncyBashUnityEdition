@@ -67,8 +67,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
   ShowTopMostFoldoutHeaderGroup: 1
-  _bumpForce: 2
-  _minPushForce: 16
+  _bumpForce: 4
+  _minPushForce: 32
   _maxPushSecond: 0.1
   _jumpBumpForce: 2
   _minJumpPush: 2
@@ -441,7 +441,7 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 2
   _brushRadius: 1
-  _paintInterval: 0.05
+  _paintInterval: 0
 --- !u!114 &265221868910894722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ab2f8d23a9a775b9054058d71b5342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallBounceControllerWallBounceController
-  _minBounceSpeed: 20
+  _minBounceSpeed: 6
   _maxBounceSpeed: 30
   _bounciness: 0.8
   _wallTags:
@@ -575,8 +575,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
   ShowTopMostFoldoutHeaderGroup: 1
-  _bumpForce: 1
-  _minPushForce: 5
+  _bumpForce: 1.5
+  _minPushForce: 7.5
   _maxPushSecond: 0.5
   _jumpBumpForce: 0.4
   _minJumpPush: 2
