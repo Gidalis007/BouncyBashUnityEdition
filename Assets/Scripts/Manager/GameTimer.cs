@@ -104,20 +104,12 @@ public class GameTimer : NetworkBehaviour
 
     private void LoadWinScene()
     {
-        if (NetworkManager == null || !IsServer)
-        {
-            return;
-        }
+        if (NetworkManager == null || !IsServer) return;
+        
 
-        if (string.IsNullOrEmpty(_winSceneName))
-        {
-            return;
-        }
+        if (string.IsNullOrEmpty(_winSceneName)) return;
 
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == _winSceneName)
-        {
-            return;
-        }
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == _winSceneName) return;
 
         SceneTransition.EnsureExists();
         NotifyTransitionRpc();
