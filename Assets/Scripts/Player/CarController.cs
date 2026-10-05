@@ -82,6 +82,7 @@ public class CarController : NetworkBehaviour
     private bool _engineStarted;
 
     private Coroutine _stopMaxSpeedRoutine;
+    private float _baseMaxSpeed;
 
     private Camera _camera;
     private Renderer[] _teamRenderers;
@@ -154,6 +155,7 @@ public int KillCount => _killCount.Value;
     private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
+        _baseMaxSpeed = MaxSpeed;
 
     }
 
@@ -628,11 +630,11 @@ public int KillCount => _killCount.Value;
 #region  Coroutines
     private IEnumerator StopMaxSpeed()
     {
-        MaxSpeed = MaxSpeed * 2f;
+        MaxSpeed = _baseMaxSpeed * 2f;
 
         yield return new WaitForSeconds(0.5f);
 
-        MaxSpeed = MaxSpeed / 2f;
+        MaxSpeed = _baseMaxSpeed;
         _stopMaxSpeedRoutine = null;
     }
 
