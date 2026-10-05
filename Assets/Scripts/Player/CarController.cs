@@ -77,6 +77,10 @@ public class CarController : NetworkBehaviour
 
     private float _coyoteTimer;
 
+    private bool _wasGrounded = true;
+    private float _lastVerticalSpeed;
+    private bool _engineStarted;
+
     private Coroutine _stopMaxSpeedRoutine;
 
     private Camera _camera;
@@ -192,10 +196,25 @@ public int KillCount => _killCount.Value;
 
     public override void OnNetworkDespawn()
     {
+        if (_engineStarted && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.EngineStop();
+            _engineStarted = false;
+        }
+
         _myTeam.OnValueChanged -= OnTeamChanged;
         _dashReady.OnValueChanged -= OnDashReadyChanged;
 
         base.OnNetworkDespawn();
+    }
+
+    private void OnDisable()
+    {
+        if (_engineStarted && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.EngineStop();
+            _engineStarted = false;
+        }
     }
 
     private void FixedUpdate()
@@ -220,17 +239,29 @@ public int KillCount => _killCount.Value;
 
         if (!IsServer) return;
 
-        if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+
+        if (!grounded)
         {
             Rigidbody.AddForce(Vector3.down * _extraGravity, ForceMode.Acceleration);
             _airPenaltyMemory = _airPenality;
             _coyoteTimer -= Time.fixedDeltaTime;
+            _wasGrounded = false;
         }
         else
         {
             _airPenaltyMemory = 1f;
             _coyoteTimer = _coyoteTime;
+
+            if (!_wasGrounded && _lastVerticalSpeed < -8f)
+            {
+                PlayLandRpc(transform.position);
+            }
+
+            _wasGrounded = true;
         }
+
+        _lastVerticalSpeed = Rigidbody.linearVelocity.y;
 
         Move();
         Direction();
@@ -240,6 +271,15 @@ public int KillCount => _killCount.Value;
     private void Update()
     {
         if (!_playable || !IsOwner) return;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.EngineStart();
+            AudioManager.Instance.SetEngine(
+                Rigidbody != null ? Mathf.Clamp01(Rigidbody.linearVelocity.magnitude / Mathf.Max(MaxSpeed, 0.01f)) : 0f,
+                Mathf.Abs(_verticalInput));
+            _engineStarted = true;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -326,6 +366,7 @@ public int KillCount => _killCount.Value;
         {
             _coyoteTimer = 0f;
             Rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            PlayJumpRpc(transform.position);
         }
     }
 
@@ -359,6 +400,7 @@ public int KillCount => _killCount.Value;
         _canDash = false;
         _dashReady.Value = false;
         UpdateDashIndicator(false);
+        PlayDashRpc(transform.position);
         if (_dashCooldownRoutine != null)
             StopCoroutine(_dashCooldownRoutine);
         _dashCooldownRoutine = StartCoroutine(DashCooldownRoutine());
@@ -552,6 +594,33 @@ public int KillCount => _killCount.Value;
     private void SetCarPainterRpc(bool painting, ETeam team)
     {
         ApplyCarPainterLocal(painting, team);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayDashRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAt("dash_whoosh", position);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayJumpRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAt("jump", position);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayLandRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayLand(position);
+        }
     }
 
 #endregion Network RPCs

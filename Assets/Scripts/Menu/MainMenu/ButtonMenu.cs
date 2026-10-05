@@ -14,6 +14,10 @@ public class ButtonMenu : MonoBehaviour
     {
         _spotLight.SetActive(true);
 
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayUI("ui_over");
+        }
     }
 
     private void OnMouseExit()
@@ -24,6 +28,11 @@ public class ButtonMenu : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayUI("ui_click");
+        }
+
         OnClick();
     }
 

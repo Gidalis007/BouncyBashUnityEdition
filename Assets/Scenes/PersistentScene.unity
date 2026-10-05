@@ -152,8 +152,8 @@ MonoBehaviour:
   musicSource: {fileID: 1483906912}
   sfxSource: {fileID: 1380201854}
   masterVolume: 1
-  musicVolume: 1
-  sfxVolume: 1
+  musicVolume: 0.35
+  sfxVolume: 0.85
 --- !u!4 &226177384
 Transform:
   m_ObjectHideFlags: 0

@@ -34,6 +34,17 @@ public class GameManager : NetworkBehaviour
 
     public ETeam WinnerTeam { get; set; } = ETeam.NONE;
 
+    public void ResetForMenu()
+    {
+        TeamsPoints.Clear();
+        WinnerTeam = ETeam.NONE;
+
+        if (IsServer)
+        {
+            PlayersController.Clear();
+        }
+    }
+
     #endregion Properties
 
     #region Mono

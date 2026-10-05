@@ -259,6 +259,8 @@ public class PlatformController : NetworkBehaviour
             FillAllWithRpc(team);
         }
 
+        PlayCaptureRpc(transform.position);
+
         _onPlatformCaptured?.Invoke(team);
     }
 
@@ -279,6 +281,15 @@ public class PlatformController : NetworkBehaviour
         _teamPixelCount[ETeam.NONE] = 0;
         _teamPixelCount[ETeam.BLUE] = team == ETeam.BLUE ? _totalPixels : 0;
         _teamPixelCount[ETeam.RED] = team == ETeam.RED ? _totalPixels : 0;
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void PlayCaptureRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayCapture(position);
+        }
     }
 
     #endregion Rpc

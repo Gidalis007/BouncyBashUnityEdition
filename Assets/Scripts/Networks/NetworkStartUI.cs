@@ -14,12 +14,22 @@ public class NetworkStartUI : MonoBehaviour
 
    public void Host()
    {
+      if (AudioManager.Instance != null)
+      {
+          AudioManager.Instance.PlayUI("ui_click");
+      }
+
       NetworkManager.Singleton.StartHost();
       transform.gameObject.SetActive(false);
    }
 
    public void Client()
    {
+      if (AudioManager.Instance != null)
+      {
+          AudioManager.Instance.PlayUI("ui_click");
+      }
+
       NetworkManager.Singleton.StartClient();
       transform.gameObject.SetActive(false);
    }

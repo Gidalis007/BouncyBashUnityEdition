@@ -92,6 +92,7 @@ public class LobbyManager : NetworkBehaviour
 
         SceneTransition.EnsureExists();
         NotifyTransitionRpc();
+        PlayMatchMusicRpc();
         StartCoroutine(LoadSceneAfterFade(sceneName));
     }
 
@@ -115,6 +116,15 @@ public class LobbyManager : NetworkBehaviour
     {
         SceneTransition.EnsureExists();
         SceneTransition.Instance.FadeOut();
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void PlayMatchMusicRpc()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMusic("match_music");
+        }
     }
 
     #endregion Methods

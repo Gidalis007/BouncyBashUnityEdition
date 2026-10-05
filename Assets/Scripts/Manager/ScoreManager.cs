@@ -38,6 +38,11 @@ public class ScoreManager : NetworkBehaviour
     public float RedPercent => _redPercent.Value;
     public float BluePercent => _bluePercent.Value;
 
+    public static void ResetMatchWinner()
+    {
+        MatchWinner = ETeam.NONE;
+    }
+
     #endregion Properties
 
     #region Mono
@@ -212,6 +217,12 @@ public class ScoreManager : NetworkBehaviour
     private void ReceiveWinnerRpc(ETeam winner)
     {
         MatchWinner = winner;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopMusic();
+            AudioManager.Instance.PlayWin();
+        }
 
         if (IsServer && GameManager.Instance != null)
         {

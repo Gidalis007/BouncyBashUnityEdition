@@ -93,6 +93,8 @@ public class GameTimer : NetworkBehaviour
         {
             _timeUp = true;
 
+            PlayTimeoutRpc();
+
             if (_scoreManager != null)
             {
                 _scoreManager.DeclareWinner(_scoreManager.GetLeadingTeam());
@@ -165,6 +167,11 @@ public class GameTimer : NetworkBehaviour
 
         _lastShownSecond = remainingSeconds;
         _timerText.text = string.Format("{0}:{1:00}", remainingSeconds / 60, remainingSeconds % 60);
+
+        if (remainingSeconds <= 10 && remainingSeconds > 0 && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("timer_tick");
+        }
     }
 
     private void HideTimer()
@@ -197,6 +204,15 @@ public class GameTimer : NetworkBehaviour
     {
         SceneTransition.EnsureExists();
         SceneTransition.Instance.FadeOut();
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void PlayTimeoutRpc()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("timeout_buzzer");
+        }
     }
 
     #endregion Methods

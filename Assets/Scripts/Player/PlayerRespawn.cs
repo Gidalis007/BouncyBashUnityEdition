@@ -63,6 +63,8 @@ public class PlayerRespawn : NetworkBehaviour
     {
         if (!IsServer) return;
 
+        PlayDeathFallRpc(transform.position);
+
         CarController victimCar = GetComponent<CarController>();
 
         if (victimCar != null)
@@ -72,6 +74,7 @@ public class PlayerRespawn : NetworkBehaviour
             if (killer != null && killer.RegisterKill())
             {
                 _pendingPainterKiller = killer;
+                PlayKillRpc(transform.position);
             }
         }
 
@@ -107,6 +110,7 @@ public class PlayerRespawn : NetworkBehaviour
                 if (killer != null)
                 {
                     killer.EnableCarPainter(_painterRewardDuration, killer.MyTeam);
+                    PlayPainterRewardRpc(killer.transform.position);
                 }
             }
 
@@ -233,6 +237,11 @@ public class PlayerRespawn : NetworkBehaviour
     [Rpc(SendTo.Owner)]
     private void HideTimerRpc()
     {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("respawn");
+        }
+
         _uiTimer = -1f;
         _timerText = null;
         _isWaitingRespawn = false;
@@ -241,5 +250,32 @@ public class PlayerRespawn : NetworkBehaviour
             Destroy(_canvas);
 
         EnableSpectatorCamera(false);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayDeathFallRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayDeathFall(position);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayKillRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAt("kill", position);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayPainterRewardRpc(Vector3 position)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAt("reward_painter", position);
+        }
     }
 }

@@ -2,10 +2,11 @@ using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class WallBounceController : MonoBehaviour
+public class WallBounceController : NetworkBehaviour
 {
     #region Serialized Fields
     [Header("Réglages du rebond")]
@@ -27,6 +28,8 @@ public class WallBounceController : MonoBehaviour
 
     #region Attribute
     private Rigidbody _rigidbody;
+    private float _lastWallSoundTime = -10f;
+    private const float WallSoundCooldown = 0.15f;
     #endregion Attribute
 
     #region Mono
@@ -68,6 +71,12 @@ public class WallBounceController : MonoBehaviour
         reflected = Vector3.ClampMagnitude(reflected, _maxBounceSpeed);
 
         _rigidbody.linearVelocity = reflected;
+
+        if (IsServer && Time.time - _lastWallSoundTime >= WallSoundCooldown)
+        {
+            _lastWallSoundTime = Time.time;
+            PlayWallBounceRpc(transform.position, Mathf.Clamp01(incomingVelocity.magnitude / 20f));
+        }
     }
 
     private bool IsWall(GameObject obj)
@@ -77,6 +86,15 @@ public class WallBounceController : MonoBehaviour
             if (obj.CompareTag(_wallTags[i])) return true;
         }
         return false;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayWallBounceRpc(Vector3 position, float intensity01)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAt("wall_bounce", position, 0.6f + 0.4f * Mathf.Clamp01(intensity01));
+        }
     }
 
     #endregion

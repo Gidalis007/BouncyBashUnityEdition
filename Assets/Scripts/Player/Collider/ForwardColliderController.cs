@@ -88,6 +88,11 @@ public class ForwardColliderController : NetworkBehaviour
         targetRb.AddForce(new Vector3(horizontalPush.x, 0f, horizontalPush.z), ForceMode.Impulse);
         targetRb.AddForce(Vector3.up * verticalPush, ForceMode.VelocityChange);
 
+        if (IsServer)
+        {
+            PlayBumpRpc(bump.transform.position, Mathf.Clamp01(impactSpeed / 20f));
+        }
+
         PainterController painter = bump.GetComponent<PainterController>();
 
         if (painter != null && painter is not CarPainter)
@@ -112,6 +117,15 @@ public class ForwardColliderController : NetworkBehaviour
     {
         yield return new WaitForSeconds(_maxPushSecond);
         _canPush = true;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayBumpRpc(Vector3 position, float intensity01)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAt("bump_hit", position, 0.6f + 0.4f * Mathf.Clamp01(intensity01));
+        }
     }
 
 

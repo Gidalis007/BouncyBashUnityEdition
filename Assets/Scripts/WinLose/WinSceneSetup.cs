@@ -23,6 +23,11 @@ public class WinSceneSetup : MonoBehaviour
 
     private void Start()
     {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMusic("menu_music");
+        }
+
         TryApply();
     }
 

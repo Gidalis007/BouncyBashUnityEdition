@@ -105,6 +105,18 @@ public class GameStartCountdown : NetworkBehaviour
     [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
     private void ShowStepRpc(string step)
     {
+        if (AudioManager.Instance != null)
+        {
+            if (step == _goText)
+            {
+                AudioManager.Instance.PlayCountdownGo();
+            }
+            else
+            {
+                AudioManager.Instance.PlaySFX("countdown_blip");
+            }
+        }
+
         if (_canvas == null)
         {
             _canvas = Instantiate(_countdownCanvasPrefab);
