@@ -67,12 +67,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
   ShowTopMostFoldoutHeaderGroup: 1
-  _bumpForce: 4
-  _minPushForce: 32
-  _maxPushSecond: 0.1
-  _jumpBumpForce: 2
+  _bumpForce: 6
+  _minPushForce: 25
+  _maxPushSecond: 0.3
+  _jumpBumpForce: 5
   _minJumpPush: 2
-  _maxJumpPush: 9
+  _maxJumpPush: 12
   _pushableTags:
   - Player
 --- !u!1 &2717504283789482901
@@ -454,6 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ab2f8d23a9a775b9054058d71b5342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallBounceControllerWallBounceController
+  ShowTopMostFoldoutHeaderGroup: 1
   _minBounceSpeed: 6
   _maxBounceSpeed: 30
   _bounciness: 0.8
