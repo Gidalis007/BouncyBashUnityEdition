@@ -68,11 +68,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ForwardColliderController
   ShowTopMostFoldoutHeaderGroup: 1
   _bumpForce: 2
-  _minPushForce: 50
+  _minPushForce: 16
   _maxPushSecond: 0.1
-  _jumpBumpForce: 7
+  _jumpBumpForce: 2
   _minJumpPush: 2
-  _maxJumpPush: 15
+  _maxJumpPush: 9
   _pushableTags:
   - Player
 --- !u!1 &2717504283789482901
@@ -403,12 +403,13 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 1
-  _moveSpeed: 70
-  _maxSpeed: 15
+  _moveSpeed: 55
+  _maxSpeed: 12
   _drag: 0.99
   _steerAngle: 4
   _traction: 0.2
   _jumpForce: 15
+  _coyoteTime: 0.1
   _dashForce: 30
   _dashCooldown: 3
   _airPenality: 1.5
@@ -433,7 +434,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 894905bad6dc4b0c8fafd3805d292bba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarPainter
+  ShowTopMostFoldoutHeaderGroup: 1
+  _team:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 2
   _brushRadius: 1
+  _paintInterval: 0.05
 --- !u!114 &265221868910894722
 MonoBehaviour:
   m_ObjectHideFlags: 0
