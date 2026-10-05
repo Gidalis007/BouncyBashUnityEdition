@@ -4271,63 +4271,6 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!1001 &1405659065
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 8.847489
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 6.5099993
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -9.740012
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071067
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
-      propertyPath: m_Name
-      value: theatresignhang
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 147422025161d4ee1a4147ba6cdabce4, type: 3}
 --- !u!1 &1442272604
 GameObject:
   m_ObjectHideFlags: 0
@@ -5508,7 +5451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: _captureThreshold
-      value: 0.78
+      value: 0.95
       objectReference: {fileID: 0}
     - target: {fileID: 3003046107580715250, guid: ffa18a797399db7009087483d337ecc3, type: 3}
       propertyPath: _textureResolution
@@ -6319,6 +6262,5 @@ SceneRoots:
   - {fileID: 1812817264}
   - {fileID: 1006478875}
   - {fileID: 1302560225}
-  - {fileID: 1405659065}
   - {fileID: 1302560229}
   - {fileID: 770006101}
