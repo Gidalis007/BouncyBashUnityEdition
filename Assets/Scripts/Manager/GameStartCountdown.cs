@@ -27,10 +27,10 @@ public class GameStartCountdown : NetworkBehaviour
 
     private IEnumerator CountdownRoutine()
     {
-        yield return new WaitForSeconds(_startDelay);
-
         TeleportPlayers();
         SetControlsRpc(true);
+
+        yield return new WaitForSeconds(_startDelay);
 
         for (int step = _countdownStart; step >= 1; step--)
         {
@@ -44,6 +44,13 @@ public class GameStartCountdown : NetworkBehaviour
         yield return new WaitForSeconds(_stepDuration);
 
         HideCountdownRpc();
+
+        GameTimer gameTimer = GetComponent<GameTimer>();
+
+        if (gameTimer != null)
+        {
+            gameTimer.StartMatchClock();
+        }
     }
 
     private void TeleportPlayers()

@@ -97,6 +97,7 @@ public class ScoreManager : NetworkBehaviour
 
         _gameOver = true;
         ReceiveWinnerRpc(winner);
+        RickRollLoser(FindLoserClientId(winner));
 
         if (string.IsNullOrEmpty(_winSceneName))
         {
@@ -234,6 +235,81 @@ public class ScoreManager : NetworkBehaviour
             {
                 platform.InitHalfSplit();
             }
+        }
+    }
+
+    private ulong FindLoserClientId(ETeam winner)
+    {
+        if (winner != ETeam.RED && winner != ETeam.BLUE)
+        {
+            return ulong.MaxValue;
+        }
+
+        ETeam loser = winner == ETeam.RED ? ETeam.BLUE : ETeam.RED;
+
+        if (GameManager.Instance == null)
+        {
+            return ulong.MaxValue;
+        }
+
+        foreach (NetworkObjectReference playerReference in GameManager.Instance.PlayersController)
+        {
+            NetworkObject player;
+
+            try
+            {
+                if (!playerReference.TryGet(out player))
+                {
+                    continue;
+                }
+            }
+            catch
+            {
+                continue;
+            }
+
+            if (player == null)
+            {
+                continue;
+            }
+
+            CarController car = player.GetComponent<CarController>();
+
+            if (car != null && car.MyTeam == loser)
+            {
+                return player.OwnerClientId;
+            }
+        }
+
+        return ulong.MaxValue;
+    }
+
+    private void RickRollLoser(ulong loserClientId)
+    {
+        if (!IsServer || loserClientId == ulong.MaxValue)
+        {
+            return;
+        }
+
+        RickRollLoserRpc(loserClientId);
+    }
+
+    [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Everyone)]
+    private void RickRollLoserRpc(ulong loserClientId)
+    {
+        if (NetworkManager == null || NetworkManager.Singleton == null)
+        {
+            return;
+        }
+
+        if (NetworkManager.Singleton.LocalClientId != loserClientId)
+        {
+            return;
+        }
+
+        if (RickRollManager.Instance != null)
+        {
+            RickRollManager.Instance.RickRoll();
         }
     }
 

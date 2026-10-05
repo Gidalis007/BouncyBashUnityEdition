@@ -26,6 +26,7 @@ public class GameTimer : NetworkBehaviour
     private int _lastBroadcastSecond = -1;
     private int _lastShownSecond = -1;
     private bool _timeUp;
+    private bool _clockRunning;
 
     #endregion Attributes
 
@@ -42,6 +43,7 @@ public class GameTimer : NetworkBehaviour
         _lastBroadcastSecond = -1;
         _lastShownSecond = -1;
         _timeUp = false;
+        _clockRunning = false;
 
         _scoreManager = GetComponent<ScoreManager>();
 
@@ -71,7 +73,7 @@ public class GameTimer : NetworkBehaviour
 
     private void TickServer()
     {
-        if (_timeUp)
+        if (_timeUp || !_clockRunning)
         {
             return;
         }
@@ -100,6 +102,19 @@ public class GameTimer : NetworkBehaviour
                 LoadWinScene();
             }
         }
+    }
+
+    // Démarre l'horloge du match (appelé par GameStartCountdown à la fin du décompte).
+    public void StartMatchClock()
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        _elapsed = 0f;
+        _timeUp = false;
+        _clockRunning = true;
     }
 
     private void LoadWinScene()
