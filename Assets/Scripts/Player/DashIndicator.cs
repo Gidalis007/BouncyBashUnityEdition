@@ -6,8 +6,10 @@ public class DashIndicator : MonoBehaviour
 #region Serialized Fields
 
     [SerializeField] private Image _squareImage;
-    [SerializeField] private Color _availableColor = Color.green;
-    [SerializeField] private Color _cooldownColor = Color.gray;
+    [SerializeField] private Sprite _readySprite;
+    [SerializeField] private Sprite _cooldownSprite;
+    [SerializeField] private Color _availableColor = Color.white;
+    [SerializeField] private Color _cooldownColor = Color.white;
 
 #endregion Serialized Fields
 
@@ -25,6 +27,9 @@ public class DashIndicator : MonoBehaviour
 
         if (_squareImage == null)
             return;
+
+        if (_readySprite != null && _cooldownSprite != null)
+            _squareImage.sprite = available ? _readySprite : _cooldownSprite;
 
         _squareImage.color = available ? _availableColor : _cooldownColor;
     }
