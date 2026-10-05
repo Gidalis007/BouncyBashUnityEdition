@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -174,6 +175,16 @@ public int KillCount => _killCount.Value;
 
         Rigidbody.isKinematic = !IsServer;
 
+        if (IsOwner)
+        {
+            NetworkTransform ownerTransform = GetComponent<NetworkTransform>();
+
+            if (ownerTransform != null)
+            {
+                ownerTransform.Interpolate = false;
+            }
+        }
+        
         GameManager.Instance.PlayersController.Add(new NetworkObjectReference(this.NetworkObject));
 
         base.OnNetworkSpawn();
@@ -519,13 +530,13 @@ public int KillCount => _killCount.Value;
         _horizontalInput = horizontal;
     }
 
-    [Rpc(SendTo.Server)]
+    [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
     private void RequestJumpServerRpc()
     {
         TryJump();
     }
 
-    [Rpc(SendTo.Server)]
+    [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
     private void RequestDashServerRpc(EDashDirection direction)
     {
         ExecuteDash(direction);
